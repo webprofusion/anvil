@@ -94,7 +94,7 @@ namespace Certes
         {
             var endpoint = await this.GetResourceUri(d => d.KeyChange);
             var location = await Account().Location();
-            
+
             var newKey = key ?? KeyFactory.NewKey(defaultKeyType);
             var keyChange = new
             {
@@ -180,7 +180,7 @@ namespace Certes
         /// <summary>
         /// Creates a new the order.
         /// </summary>
-        /// <param name="identifiers">The identifiers.</param>
+        /// <param name="identifiers">The (dns) identifiers.</param>
         /// <param name="notBefore">Th value of not before field for the certificate.</param>
         /// <param name="notAfter">The value of not after field for the certificate.</param>
         /// <returns>
@@ -193,8 +193,36 @@ namespace Certes
             var body = new Order
             {
                 Identifiers = identifiers
-                    .Select(id => new Identifier { Type = IdentifierType.Dns, Value = id })
+                    .Select(id => new Identifier
+                    {
+                        Type = IdentifierType.Dns,
+                        Value = id
+                    })
                     .ToArray(),
+                NotBefore = notBefore,
+                NotAfter = notAfter,
+            };
+
+            var order = await HttpClient.Post<Order>(this, endpoint, body, true);
+            return new OrderContext(this, order.Location);
+        }
+
+        /// <summary>
+        /// Creates a new the order.
+        /// </summary>
+        /// <param name="identifiers">The identifiers.</param>
+        /// <param name="notBefore">Th value of not before field for the certificate.</param>
+        /// <param name="notAfter">The value of not after field for the certificate.</param>
+        /// <returns>
+        /// The order context created.
+        /// </returns>
+        public async Task<IOrderContext> NewOrder(IList<Identifier> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null)
+        {
+            var endpoint = await this.GetResourceUri(d => d.NewOrder);
+
+            var body = new Order
+            {
+                Identifiers = identifiers.ToArray(),
                 NotBefore = notBefore,
                 NotAfter = notAfter,
             };

@@ -9,5 +9,10 @@
         /// The DNS identifier.
         /// </summary>
         public const string Dns = "dns";
+        
+        /// <summary>
+        /// The IP identifier.
+        /// </summary>
+        public const string Ip = "ip";
     }
 }

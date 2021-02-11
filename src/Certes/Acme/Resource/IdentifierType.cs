@@ -15,5 +15,11 @@ namespace Certes.Acme.Resource
         /// </summary>
         [EnumMember(Value = "dns")]
         Dns,
+
+        /// <summary>
+        /// The IP type.
+        /// </summary>
+        [EnumMember(Value = "ip")]
+        Ip,
     }
 }
