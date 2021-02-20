@@ -135,12 +135,37 @@ namespace Certes
         /// <returns>
         /// The ACME directory.
         /// </returns>
-        public async Task<Directory> GetDirectory()
+        public async Task<Directory> GetDirectory(bool throwOnError = false)
         {
             if (directory == null)
             {
-                var resp = await HttpClient.Get<Directory>(DirectoryUri);
-                directory = resp.Resource;
+                try
+                {
+                    var resp = await HttpClient.Get<Directory>(DirectoryUri);
+
+                    if (resp.Error != null && throwOnError)
+                    {
+                        throw new AcmeException(resp.Error.Detail);
+                    }
+
+                    directory = resp.Resource;
+                }
+                catch (Exception exp)
+                {
+                    if (throwOnError)
+                    {
+                        // testing the directory URL can also be used to diagnose connectivity to service downtime, 
+                        // so some consumers will want the exception instead of a null directory
+                        if (exp is AcmeException)
+                        {
+                            throw exp;
+                        }
+                        else
+                        {
+                            throw new AcmeException("The ACME service (directory) is unavailable.", exp);
+                        }
+                    }
+                }
             }
 
             return directory;

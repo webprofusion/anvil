@@ -54,10 +54,11 @@ namespace Certes
         /// <summary>
         /// Gets the ACME directory.
         /// </summary>
+        /// <param name="throwOnError">If true, throw an AcmeException if we can't fetch the directory or we get an Error response</param>
         /// <returns>
         /// The ACME directory.
         /// </returns>
-        Task<Directory> GetDirectory();
+        Task<Directory> GetDirectory(bool throwOnError = false);
 
         /// <summary>
         /// Creates an account.
