@@ -11,7 +11,7 @@ namespace Certes.Jws
     public class AccountKey : IAccountKey
     {
         private static readonly KeyAlgorithmProvider keyAlgorithmProvider = new KeyAlgorithmProvider();
-        
+
         private JsonWebKey jwk;
         private readonly ISigner signer;
 

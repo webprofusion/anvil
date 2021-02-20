@@ -31,7 +31,7 @@ namespace Certes.Acme
         /// <value>
         /// The identifier for this error.
         /// </value>
-        public Identifier Identifier { get; set;}
+        public Identifier Identifier { get; set; }
 
         /// <summary>
         /// Gets or sets the subproblems.

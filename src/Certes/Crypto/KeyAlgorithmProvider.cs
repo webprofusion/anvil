@@ -29,7 +29,7 @@ namespace Certes.Crypto
             {
                 var pemReader = new PemReader(reader);
                 var untyped = pemReader.ReadObject();
-                switch(untyped)
+                switch (untyped)
                 {
                     case AsymmetricCipherKeyPair keyPair:
                         return ReadKey(keyPair.Private);
@@ -68,7 +68,7 @@ namespace Certes.Crypto
 
                 DerObjectIdentifier curveId;
                 KeyAlgorithm algo;
-                switch(domain.Curve.FieldSize)
+                switch (domain.Curve.FieldSize)
                 {
                     case 256:
                         curveId = SecObjectIdentifiers.SecP256r1;

@@ -129,13 +129,13 @@ namespace Certes
         public async Task ChangeKey(AcmeAccount account, KeyInfo newKey)
         {
             var keyPair = new AccountKey(newKey);
-            
+
             var body = new
             {
                 account = account.Location,
                 newKey = keyPair.JsonWebKey,
             };
-            
+
             var jws = new JwsSigner(keyPair.SignatureKey);
             var payload = jws.Sign(body);
             var payloadWithResourceType = new

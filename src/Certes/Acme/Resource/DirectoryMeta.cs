@@ -61,7 +61,7 @@ namespace Certes.Acme.Resource
         {
             TermsOfService = termsOfService;
             Website = website;
-            CaaIdentities = caaIdentities == null ? 
+            CaaIdentities = caaIdentities == null ?
                 (IList<string>)new string[0] :
                 new ReadOnlyCollection<string>(caaIdentities);
             ExternalAccountRequired = externalAccountRequired;

@@ -42,8 +42,8 @@ namespace Certes.Crypto
             for (var i = 0; i < nums.Length; ++i)
             {
                 Array.Copy(
-                    nums[i], 0, 
-                    signatureBytes, fieldSize * (i + 1) - nums[i].Length, 
+                    nums[i], 0,
+                    signatureBytes, fieldSize * (i + 1) - nums[i].Length,
                     nums[i].Length);
             }
 

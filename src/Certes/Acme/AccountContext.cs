@@ -90,7 +90,7 @@ namespace Certes.Acme
         {
             var endpoint = await context.GetResourceUri(d => d.NewAccount);
             var jws = new JwsSigner(context.AccountKey);
-            
+
             if (eabKeyId != null && eabKey != null)
             {
                 var header = new
@@ -117,16 +117,16 @@ namespace Certes.Acme
                 switch (header.alg)
                 {
                     case "HS512":
-                        using(var hs512 = new HMACSHA512(JwsConvert.FromBase64String(eabKey))) signatureHash = hs512.ComputeHash(signingBytes);
+                        using (var hs512 = new HMACSHA512(JwsConvert.FromBase64String(eabKey))) signatureHash = hs512.ComputeHash(signingBytes);
                         break;
                     case "HS384":
                         using (var hs384 = new HMACSHA384(JwsConvert.FromBase64String(eabKey))) signatureHash = hs384.ComputeHash(signingBytes);
                         break;
                     default:
                         using (var hs256 = new HMACSHA256(JwsConvert.FromBase64String(eabKey))) signatureHash = hs256.ComputeHash(signingBytes);
-                        break;   
+                        break;
                 }
-                    
+
                 var signatureBase64 = JwsConvert.ToBase64String(signatureHash);
 
                 body.ExternalAccountBinding = new

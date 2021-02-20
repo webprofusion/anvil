@@ -60,7 +60,7 @@ namespace Certes.Acme
         /// </returns>
         public async Task<Challenge> Validate()
         {
-            var resp = await Context.HttpClient.Post<Challenge>(Context, Location, new {}, true);
+            var resp = await Context.HttpClient.Post<Challenge>(Context, Location, new { }, true);
             return resp.Resource;
         }
     }

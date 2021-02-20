@@ -23,7 +23,7 @@ namespace Certes.Jws
         /// <value>
         /// The modulus value for the RSA public key.
         /// </value>
-        [JsonProperty("n", Order =3)]
+        [JsonProperty("n", Order = 3)]
         internal string Modulus { get; set; }
     }
 }

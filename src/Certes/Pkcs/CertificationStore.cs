@@ -73,7 +73,7 @@ namespace Certes.Pkcs
                         string.Format(Strings.ErrorIssuerNotFound, certificate.IssuerDN, certificate.SubjectDN));
                 }
             }
-            
+
             return chain.Select(cert => cert.GetEncoded()).ToArray();
         }
     }

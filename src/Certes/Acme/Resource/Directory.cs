@@ -75,7 +75,7 @@ namespace Certes.Acme.Resource
             Uri newNonce,
             Uri newAccount,
             Uri newOrder,
-            Uri revokeCert, 
+            Uri revokeCert,
             Uri keyChange,
             DirectoryMeta meta)
         {
