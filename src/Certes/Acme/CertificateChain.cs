@@ -46,8 +46,9 @@ namespace Certes.Acme
         /// Checks if the certificate chain is signed by a preferred issuer.
         /// </summary>
         /// <param name="preferredChain">The name of the preferred issuer</param>
+        /// <param name="matchAny">If true, all certs in chain will be checked for matching issuer, otherwise only last cert in chain is used</param>
         /// <returns>true if a certificate in the chain is issued by preferredChain or preferredChain is empty</returns>
-        public bool MatchesPreferredChain(string preferredChain)
+        public bool MatchesPreferredChain(string preferredChain, bool matchAny = false)
         {
             if (string.IsNullOrEmpty(preferredChain))
                 return true;
@@ -55,11 +56,31 @@ namespace Certes.Acme
             var certParser = new X509CertificateParser();
             var allcerts = Issuers.Select(x => x.ToPem()).ToList();
             allcerts.Insert(0, Certificate.ToPem());
-            foreach (var pem in allcerts)
+
+            if (!matchAny)
             {
+                //last cert in chain has matching issuer
+                var pem = allcerts.Last();
                 var cert = certParser.ReadCertificate(Encoding.UTF8.GetBytes(pem));
                 if (cert.IssuerDN.GetValueList().Contains(preferredChain))
+                {
                     return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            else
+            {
+                // any cert has a matching issuer
+                foreach (var pem in allcerts)
+                {
+                    var cert = certParser.ReadCertificate(Encoding.UTF8.GetBytes(pem));
+                    if (cert.IssuerDN.GetValueList().Contains(preferredChain))
+                        return true;
+                }
             }
 
             return false;
