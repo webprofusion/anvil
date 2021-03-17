@@ -1,8 +1,10 @@
 # Certes
-## The project is a slight fork of https://github.com/fszlin/certes with packaging updates
+
+**The project is a slight fork of https://github.com/fszlin/certes with packaging updates and feature updates.**
+The updated package is published to nuget as `Webprofusion.Certes`. 
 
 Certes is an [ACME](https://en.wikipedia.org/wiki/Automated_Certificate_Management_Environment)
-client runs on .NET 4.5+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
+client runs on .NET 4..6.2+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
 It is aimed to provide an easy to use API for managing certificates during deployment processes.
 
 ## Usage
@@ -111,26 +113,6 @@ var pfx = pfxBuilder.Build("my-cert", "abcd1234");
 ```
 
 Check the [APIs](APIv2.md) for more details.
-
-*For ACME v1, please see [the doc here](README.v1.md).*
-
-## CLI
-
-The CLI is available as a dotnet global tool.
-[.NET Core Runtime 2.1+](https://www.microsoft.com/net/download/dotnet-core/runtime-2.1.0)
- is required to use dotnet tools.
-
-To install Certes CLI *(you may need to restart the console session if this is the first dotnet tool installed)*
-```DOS
-dotnet tool install --global dotnet-certes
-```
-
-See [CLI usage](CLI.md), or simply use the `--help` option to get started
-```DOS
-certes --help
-```
-
-Also check this [AppVeyor script][AppVeyorCliSample] for renewing certificates on Azure apps.
 
 ## Versioning
 
