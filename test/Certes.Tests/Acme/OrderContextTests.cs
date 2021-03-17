@@ -33,7 +33,7 @@ namespace Certes.Acme
             httpClientMock.Reset();
 
             contextMock
-                .Setup(c => c.GetDirectory())
+                .Setup(c => c.GetDirectory(false))
                 .ReturnsAsync(Helper.MockDirectoryV2);
             contextMock
                 .SetupGet(c => c.AccountKey)

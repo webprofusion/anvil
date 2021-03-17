@@ -130,7 +130,7 @@
     <value>Illegal base64url string.</value>
   </data>
   <data name="ErrorInvalidKeyData" xml:space="preserve">
-    <value>Invaid key data.</value>
+    <value>Invalid key data.</value>
   </data>
   <data name="ErrorInvalidOrderStatusForFinalize" xml:space="preserve">
     <value>Can not finalize order with status '{0}'.</value>

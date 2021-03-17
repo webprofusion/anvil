@@ -2,25 +2,14 @@
   <Import Project="../../misc/certes.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net452;net47</TargetFrameworks>
+    <TargetFrameworks>net5.0;net462;net47</TargetFrameworks>
     <RootNamespace>Certes</RootNamespace>
     <NoWarn>1701;1702;1705;0618</NoWarn>
-    <IncludeCli>$(TargetFramework.StartsWith('netcoreapp'))</IncludeCli>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1705;0618</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(IncludeCli)' != 'True'">
-    <Compile Remove="Cli\**" />
-    <EmbeddedResource Remove="Cli\**" />
-    <None Remove="Cli\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Net.Http" Condition="'$(TargetFramework)' == 'net452' Or '$(TargetFramework)' == 'net47'" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.8.0">
@@ -39,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Certes.Cli\Certes.Cli.csproj" Condition="'$(IncludeCli)' == 'True'" />
     <ProjectReference Include="..\..\src\Certes\Certes.csproj" />
     <ProjectReference Include="..\Certes.Tests\Certes.Tests.csproj" />
   </ItemGroup>

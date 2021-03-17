@@ -2,24 +2,25 @@
   <Import Project="../../misc/certes.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45;net47</TargetFrameworks>
-    <AssemblyVersion>2.3.3</AssemblyVersion>
+    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+    <AssemblyVersion>2.3.5</AssemblyVersion>
     <AssemblyVersion Condition="$(CERTES_ASSEMBLYVERSION) != ''">$(CERTES_ASSEMBLYVERSION)</AssemblyVersion>
-    <Version>$(AssemblyVersion)$(CertesPackageVersionSuffix)</Version>
-    <FileVersion>$(AssemblyVersion)$(CertesFileVersionSuffix)</FileVersion>
+    <Version>2.3.5</Version>
+    <FileVersion>2.3.5</FileVersion>
     <InformationalVersion>$(AssemblyVersion)$(CertesInformationalVersionSuffix)</InformationalVersion>
     <Authors>Certes Contributors</Authors>
     <Company />
     <Product>Certes ACME Client</Product>
     <Title>$(Product)</Title>
-    <Description>A client implementation for the Automated Certificate Management Environment (ACME) protocol.</Description>
+    <Description>A client implementation for the Automated Certificate Management Environment (ACME) protocol. This package is a fork of the excellent https://github.com/fszlin/certes project with updated packaging and feature updates. Used by https://certifytheweb.com</Description>
     <PackageTags>Certes;letsencrypt;ACME;HTTPS;SSL;Certificate;dotnettool</PackageTags>
-    <PackageProjectUrl>https://github.com/fszlin/certes</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/webprofusion/certes</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/fszlin/certes</RepositoryUrl>
+    <RepositoryUrl>https://github.com/webprofusion/certes</RepositoryUrl>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Certes.xml</DocumentationFile>
     <PackageIcon>logo.png</PackageIcon>
+    <PackageId>Webprofusion.Certes</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,12 +44,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Net.Http" Condition="'$(TargetFramework)' == 'net45' Or '$(TargetFramework)' == 'net47'" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.9" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net45'" />
   </ItemGroup>
 

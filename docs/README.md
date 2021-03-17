@@ -1,4 +1,5 @@
 # Certes
+## The project is a slight fork of https://github.com/fszlin/certes with packaging updates
 
 Certes is an [ACME](https://en.wikipedia.org/wiki/Automated_Certificate_Management_Environment)
 client runs on .NET 4.5+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
@@ -6,13 +7,13 @@ It is aimed to provide an easy to use API for managing certificates during deplo
 
 ## Usage
 
-Install [Certes](https://www.nuget.org/packages/Certes/) nuget package into your project:
+Install [Certes](https://www.nuget.org/packages/Webprofusion.Certes/) nuget package into your project:
 ```PowerShell
-Install-Package Certes
+Install-Package Webprofusion.Certes
 ```
 or using .NET CLI:
 ```DOS
-dotnet add package Certes
+dotnet add package Webprofusion.Certes
 ```
 
 [Let's Encrypt](https://letsencrypt.org/how-it-works/)
@@ -136,17 +137,3 @@ Also check this [AppVeyor script][AppVeyorCliSample] for renewing certificates o
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags](https://github.com/fszlin/certes/tags) on this repository. 
 
 Also check the [changelog](CHANGELOG.md) to see what's we are working on.
-
-## CI Status
-[![NuGet](https://img.shields.io/nuget/vpre/certes.svg?label=Certes)](https://www.nuget.org/packages/certes/absoluteLatest/)
-[![NuGet](https://img.shields.io/nuget/dt/certes.svg)](https://www.nuget.org/packages/certes/)
-[![NuGet](https://img.shields.io/nuget/vpre/dotnet-certes.svg?label=CLI)](https://www.nuget.org/packages/dotnet-certes/absoluteLatest/)
-[![NuGet](https://img.shields.io/nuget/dt/dotnet-certes.svg)](https://www.nuget.org/packages/dotnet-certes/)
-
-
-[![AppVeyor](https://img.shields.io/appveyor/ci/fszlin/certes/master.svg)](https://ci.appveyor.com/project/fszlin/certes)
-[![AppVeyor](https://img.shields.io/appveyor/tests/fszlin/certes/master.svg)](https://ci.appveyor.com/project/fszlin/certes/build/tests)
-[![codecov](https://codecov.io/gh/fszlin/certes/branch/master/graph/badge.svg)](https://codecov.io/gh/fszlin/certes)
-[![BCH compliance](https://bettercodehub.com/edge/badge/fszlin/certes?branch=master)](https://bettercodehub.com/results/fszlin/certes)
-
-[AppVeyorCliSample]: https://github.com/fszlin/lo0.in/blob/master/.appveyor.yml#L43

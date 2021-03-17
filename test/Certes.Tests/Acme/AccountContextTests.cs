@@ -24,7 +24,7 @@ namespace Certes.Acme
             httpClientMock.Reset();
 
             contextMock
-                .Setup(c => c.GetDirectory())
+                .Setup(c => c.GetDirectory(false))
                 .ReturnsAsync(Helper.MockDirectoryV2);
             contextMock
                 .Setup(c => c.Sign(It.IsAny<object>(), location))
@@ -60,7 +60,7 @@ namespace Certes.Acme
             httpClientMock.Reset();
 
             contextMock
-                .Setup(c => c.GetDirectory())
+                .Setup(c => c.GetDirectory(false))
                 .ReturnsAsync(Helper.MockDirectoryV2);
             contextMock
                 .SetupGet(c => c.AccountKey)
@@ -108,7 +108,7 @@ namespace Certes.Acme
             httpClientMock.Reset();
 
             contextMock
-                .Setup(c => c.GetDirectory())
+                .Setup(c => c.GetDirectory(false))
                 .ReturnsAsync(Helper.MockDirectoryV2);
             contextMock
                 .SetupGet(c => c.AccountKey)

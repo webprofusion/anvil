@@ -11,7 +11,7 @@ This document details the ACME resources and flows implemented by *Certes*.
 |               | finding URL by key        | :heavy_check_mark: | | |
 |               | update                    | :heavy_check_mark: | | |
 |               | change of ToS             | :heavy_check_mark: | | |
-|               | ext. account binding      | :heavy_check_mark: | | |
+|               | ext. account binding      | :heavy_check_mark: | | :heavy_check_mark: |
 |               | key roll-over             | :heavy_check_mark: | | |
 |               | deactivation              | :heavy_check_mark: | | |
 | Registration  | new                       | :heavy_multiplication_x: | :heavy_check_mark: [draft-02][spec-02-reg] | :heavy_check_mark: [draft-02][spec-02-reg] |
