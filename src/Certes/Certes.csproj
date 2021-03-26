@@ -31,6 +31,9 @@
     <None Remove="Resources\Certificates\dst-root-ca-x3.pem" />
     <None Remove="Resources\Certificates\fake-le-root-x1.pem" />
     <None Remove="Resources\Certificates\isrg-root-x1.pem" />
+    <None Remove="Resources\Certificates\letsencrypt-stg-int-e1.pem" />
+    <None Remove="Resources\Certificates\letsencrypt-stg-int-r3.pem" />
+    <None Remove="Resources\Certificates\letsencrypt-stg-root-x1.pem" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +44,9 @@
     <EmbeddedResource Include="Resources\Certificates\dst-root-ca-x3.pem" />
     <EmbeddedResource Include="Resources\Certificates\fake-le-root-x1.pem" />
     <EmbeddedResource Include="Resources\Certificates\isrg-root-x1.pem" />
+    <EmbeddedResource Include="Resources\Certificates\letsencrypt-stg-int-e1.pem" />
+    <EmbeddedResource Include="Resources\Certificates\letsencrypt-stg-int-r3.pem" />
+    <EmbeddedResource Include="Resources\Certificates\letsencrypt-stg-root-x1.pem" />
   </ItemGroup>
 
   <ItemGroup>
