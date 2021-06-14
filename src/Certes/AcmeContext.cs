@@ -158,7 +158,7 @@ namespace Certes
                         // so some consumers will want the exception instead of a null directory
                         if (exp is AcmeException)
                         {
-                            throw exp;
+                            throw;
                         }
                         else
                         {

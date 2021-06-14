@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Certes.Jws;
 using Certes.Properties;
+using Certes.Jws;
 
 namespace Certes.Acme
 {
@@ -118,8 +118,7 @@ namespace Certes.Acme
                 response = await client.Post<T>(location, payload);
             }
 
-            if (ensureSuccessStatusCode && response.Error != null)
-            {
+            if (ensureSuccessStatusCode && response.Error != null) {
                 throw new AcmeRequestException(
                     string.Format(Strings.ErrorFetchResource, location),
                     response.Error);

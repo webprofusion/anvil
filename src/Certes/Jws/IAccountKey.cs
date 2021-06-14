@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Text;
+using Certes.Crypto;
 using Certes.Json;
 using Certes.Pkcs;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Security;
 
 namespace Certes.Jws
 {
@@ -76,7 +79,7 @@ namespace Certes.Jws
         /// </summary>
         /// <param name="key">The account key.</param>
         /// <returns>The thumbprint.</returns>
-        public static byte[] GenerateThumbprint(this IAccountKey key) => key.GenerateThumbprint();
+        public static byte[] GenerateThumbprint(this IAccountKey key) => key.SignatureKey.GenerateThumbprint();
 
         /// <summary>
         /// Generates the base64 encoded thumbprint for the given account <paramref name="key"/>.
