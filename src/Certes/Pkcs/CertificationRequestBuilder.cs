@@ -95,7 +95,7 @@ namespace Certes.Pkcs
             catch (ArgumentException ex)
             {
                 throw new ArgumentOutOfRangeException(
-                    $"{distinguishedName} contains an ivalid X509 name.", ex);
+                    $"{distinguishedName} contains an invalid X509 name.", ex);
             }
 
             var oidList = name.GetOidList();
@@ -166,12 +166,20 @@ namespace Certes.Pkcs
                 .Select(n => new GeneralName(GeneralName.DnsName, n))
                 .ToArray();
 
-            var extensions = new X509Extensions(new Dictionary<DerObjectIdentifier, X509Extension>
+            var extensionsToAdd = new Dictionary<DerObjectIdentifier, X509Extension>
             {
                 { X509Extensions.BasicConstraints, new X509Extension(false, new DerOctetString(new BasicConstraints(false))) },
-                { X509Extensions.KeyUsage, new X509Extension(false, new DerOctetString(new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment | KeyUsage.NonRepudiation))) },
+                { X509Extensions.KeyUsage, new X509Extension(false, new DerOctetString(new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment))) },
                 { X509Extensions.SubjectAlternativeName, new X509Extension(false, new DerOctetString(new GeneralNames(altNames))) }
-            });
+            };
+
+            var ocspMustStaple = false;
+            if (ocspMustStaple)
+            {
+                extensionsToAdd.Add(new DerObjectIdentifier("1.3.6.1.5.5.7.1.24"), new X509Extension(false, new DerOctetString(new byte[] { 0x30, 0x03, 0x02, 0x01, 0x05 })));
+            }
+
+            var extensions = new X509Extensions(extensionsToAdd);
 
             var attribute = new AttributePkcs(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest, new DerSet(extensions));
 

@@ -2,11 +2,11 @@
   <Import Project="../../misc/certes.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
-    <AssemblyVersion>2.3.5</AssemblyVersion>
+    <TargetFrameworks>net5.0;netstandard2.0;</TargetFrameworks>
+    <AssemblyVersion>2.3.6</AssemblyVersion>
     <AssemblyVersion Condition="$(CERTES_ASSEMBLYVERSION) != ''">$(CERTES_ASSEMBLYVERSION)</AssemblyVersion>
-    <Version>2.3.5</Version>
-    <FileVersion>2.3.5</FileVersion>
+    <Version>2.3.6</Version>
+    <FileVersion>2.3.6</FileVersion>
     <InformationalVersion>$(AssemblyVersion)$(CertesInformationalVersionSuffix)</InformationalVersion>
     <Authors>Certes Contributors</Authors>
     <Company />
@@ -44,9 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net45'" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
 
   <ItemGroup>
