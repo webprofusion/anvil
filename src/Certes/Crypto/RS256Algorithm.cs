@@ -8,11 +8,11 @@ namespace Certes.Crypto
     {
         public ISigner CreateSigner(IKey key) => new RS256Signer(key);
 
-        public IKey GenerateKey()
+        public IKey GenerateKey(int? keySize = 2048)
         {
             var generator = GeneratorUtilities.GetKeyPairGenerator("RSA");
             var generatorParams = new RsaKeyGenerationParameters(
-                BigInteger.ValueOf(0x10001), new SecureRandom(), 2048, 128);
+                BigInteger.ValueOf(0x10001), new SecureRandom(), (int)keySize, 25);
             generator.Init(generatorParams);
             var keyPair = generator.GenerateKeyPair();
             return new AsymmetricCipherKey(KeyAlgorithm.RS256, keyPair);
