@@ -50,10 +50,11 @@ namespace Certes.Pkcs
         /// Gets the issuers of given certificate.
         /// </summary>
         /// <param name="der">The certificate.</param>
+        /// <param name="requireAllIssuers">If true, don't attempt to resolve all issuers from cert store.</param>
         /// <returns>
         /// The issuers of the certificate.
         /// </returns>
-        public IList<byte[]> GetIssuers(byte[] der)
+        public IList<byte[]> GetIssuers(byte[] der, bool requireAllIssuers = false)
         {
             var certParser = new X509CertificateParser();
             var certificate = certParser.ReadCertificate(der);
@@ -69,8 +70,15 @@ namespace Certes.Pkcs
                 }
                 else
                 {
-                    throw new AcmeException(
-                        string.Format(Strings.ErrorIssuerNotFound, certificate.IssuerDN, certificate.SubjectDN));
+                    if (requireAllIssuers)
+                    {
+                        throw new AcmeException(
+                            string.Format(Strings.ErrorIssuerNotFound, certificate.IssuerDN, certificate.SubjectDN));
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
 
