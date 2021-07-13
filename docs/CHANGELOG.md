@@ -1,9 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-- n/a
-## [2.3.5] - 2020-03-17
+## [2.3.5] - 2021-07-13
+### Added
+- Support alternate RSA key sizes
+### Changed
+- Make AcmeException optional for GetIssuers if issuer not found in local store
+## [2.3.5] - 2021-03-17
 ### Added
 - Support alternate link relations ak.a Preferred Chain ([#232][i232])
 - Implement external account binding support (library). ([#231][i231])

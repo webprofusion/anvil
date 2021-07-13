@@ -21,6 +21,7 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Certes.xml</DocumentationFile>
     <PackageIcon>logo.png</PackageIcon>
     <PackageId>Webprofusion.Certes</PackageId>
+    <AssemblyName>Certes</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
