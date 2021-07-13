@@ -3,6 +3,6 @@
     internal interface IKeyAlgorithm
     {
         ISigner CreateSigner(IKey keyPair);
-        IKey GenerateKey(int? keySize);
+        IKey GenerateKey(int? keySize = null);
     }
 }
