@@ -84,6 +84,11 @@ namespace Certes
         }
 
         /// <summary>
+        /// If enabled, certificate request requires Ocsp Must Staple attribute
+        /// </summary>
+        public bool RequireOcspMustStaple { get; set; }
+
+        /// <summary>
         /// Gets all the fields with value.
         /// </summary>
         /// <value>

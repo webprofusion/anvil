@@ -35,7 +35,7 @@ namespace Certes
                 builder.AddName("CN", builder.SubjectAlternativeNames[0]);
             }
 
-            return await context.Finalize(builder.Generate());
+            return await context.Finalize(builder.Generate(csr.RequireOcspMustStaple));
         }
 
         /// <summary>
