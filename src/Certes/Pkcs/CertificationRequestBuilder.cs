@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Certes.Crypto;
@@ -166,15 +166,22 @@ namespace Certes.Pkcs
                 .Select(n => new GeneralName(GeneralName.DnsName, n))
                 .ToArray();
 
+            var keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment);
+
+            if (Key.Algorithm != KeyAlgorithm.RS256)
+            {
+                // Elliptic Curve keys don't support KeyEncipherment 
+                keyUsage = new KeyUsage(KeyUsage.DigitalSignature);
+            }
+
             var extensionsToAdd = new Dictionary<DerObjectIdentifier, X509Extension>
             {
                 { X509Extensions.BasicConstraints, new X509Extension(false, new DerOctetString(new BasicConstraints(false))) },
-                { X509Extensions.KeyUsage, new X509Extension(false, new DerOctetString(new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment))) },
+                { X509Extensions.KeyUsage, new X509Extension(false, new DerOctetString(keyUsage)) },
                 { X509Extensions.SubjectAlternativeName, new X509Extension(false, new DerOctetString(new GeneralNames(altNames))) }
             };
 
             if (requireOcspMustStaple)
-            if (ocspMustStaple)
             {
                 extensionsToAdd.Add(new DerObjectIdentifier("1.3.6.1.5.5.7.1.24"), new X509Extension(false, new DerOctetString(new byte[] { 0x30, 0x03, 0x02, 0x01, 0x05 })));
             }
