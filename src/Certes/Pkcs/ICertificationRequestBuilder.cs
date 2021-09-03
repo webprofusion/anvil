@@ -11,7 +11,7 @@ namespace Certes.Pkcs
         /// Generates the CSR.
         /// </summary>
         /// <returns>The CSR data.</returns>
-        byte[] Generate();
+        byte[] Generate(bool requireOcspMustStaple = false);
 
         /// <summary>
         /// Exports the key used to generate the CSR.

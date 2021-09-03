@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Certes.Crypto;
@@ -131,9 +131,9 @@ namespace Certes.Pkcs
         /// <returns>
         /// The CSR data.
         /// </returns>
-        public byte[] Generate()
+        public byte[] Generate(bool requireOcspMustStaple  = false)
         {
-            var csr = GeneratePkcs10();
+            var csr = GeneratePkcs10(requireOcspMustStaple);
             return csr.GetDerEncoded();
         }
 
@@ -152,7 +152,7 @@ namespace Certes.Pkcs
             };
         }
 
-        private Pkcs10CertificationRequest GeneratePkcs10()
+        private Pkcs10CertificationRequest GeneratePkcs10(bool requireOcspMustStaple)
         {
             var x509 = new X509Name(attributes.Select(p => p.Id).ToArray(), attributes.Select(p => p.Value).ToArray());
 
@@ -173,7 +173,7 @@ namespace Certes.Pkcs
                 { X509Extensions.SubjectAlternativeName, new X509Extension(false, new DerOctetString(new GeneralNames(altNames))) }
             };
 
-            var ocspMustStaple = false;
+            if (requireOcspMustStaple)
             if (ocspMustStaple)
             {
                 extensionsToAdd.Add(new DerObjectIdentifier("1.3.6.1.5.5.7.1.24"), new X509Extension(false, new DerOctetString(new byte[] { 0x30, 0x03, 0x02, 0x01, 0x05 })));
