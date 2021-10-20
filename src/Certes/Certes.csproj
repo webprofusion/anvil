@@ -3,10 +3,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;netstandard2.0;</TargetFrameworks>
-    <AssemblyVersion>2.3.8</AssemblyVersion>
+    <AssemblyVersion>2.3.9</AssemblyVersion>
     <AssemblyVersion Condition="$(CERTES_ASSEMBLYVERSION) != ''">$(CERTES_ASSEMBLYVERSION)</AssemblyVersion>
-    <Version>2.3.8</Version>
-    <FileVersion>2.3.8</FileVersion>
+    <Version>2.3.9</Version>
+    <FileVersion>2.3.9</FileVersion>
     <InformationalVersion>$(AssemblyVersion)$(CertesInformationalVersionSuffix)</InformationalVersion>
     <Authors>Certes Contributors</Authors>
     <Company />
@@ -27,7 +27,7 @@
   <ItemGroup>
     <None Include="..\..\misc\logo.png" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Remove="Resources\Certificates\dst-root-ca-x3.pem" />
     <None Remove="Resources\Certificates\fake-le-root-x1.pem" />
@@ -45,8 +45,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.*" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
 
@@ -64,7 +64,7 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugType>Full</DebugType>
   </PropertyGroup>
