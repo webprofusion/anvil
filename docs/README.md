@@ -92,11 +92,6 @@ Download the certificate once validation is done
 var privateKey = KeyFactory.NewKey(KeyAlgorithm.ES256);
 var cert = await order.Generate(new CsrInfo
 {
-    CountryName = "CA",
-    State = "Ontario",
-    Locality = "Toronto",
-    Organization = "Certes",
-    OrganizationUnit = "Dev",
     CommonName = "your.domain.name",
 }, privateKey);
 ```
