@@ -1,19 +1,19 @@
-﻿namespace Certes.Crypto
+namespace Certes.Crypto
 {
     /// <summary>
-    /// Provider for key algorithms
+    /// Provides signer algorithms
     /// </summary>
     public interface IKeyAlgorithm
     {
         /// <summary>
-        /// Create signer
+        /// Create a signer for the given key pair
         /// </summary>
         /// <param name="keyPair"></param>
         /// <returns></returns>
         ISigner CreateSigner(IKey keyPair);
-
+        
         /// <summary>
-        /// Generate Key
+        /// Generate a key, using given keysize if applicable
         /// </summary>
         /// <param name="keySize"></param>
         /// <returns></returns>
