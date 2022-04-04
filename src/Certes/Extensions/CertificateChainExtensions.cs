@@ -36,8 +36,9 @@ namespace Certes
         /// </summary>
         /// <param name="certificateChain">The certificate chain.</param>
         /// <param name="certKey">The certificate key.</param>
+        /// <param name="requireAllIssuers">If true, all issuers are required in the chain, including unknown roots</param>
         /// <returns>The encoded certificate chain.</returns>
-        public static string ToPem(this CertificateChain certificateChain, IKey certKey = null)
+        public static string ToPem(this CertificateChain certificateChain, IKey certKey = null, bool requireAllIssuers = false)
         {
             var certStore = new CertificateStore();
             foreach (var issuer in certificateChain.Issuers)
@@ -45,7 +46,7 @@ namespace Certes
                 certStore.Add(issuer.ToDer());
             }
 
-            var issuers = certStore.GetIssuers(certificateChain.Certificate.ToDer());
+            var issuers = certStore.GetIssuers(certificateChain.Certificate.ToDer(), requireAllIssuers);
 
             using (var writer = new StringWriter())
             {

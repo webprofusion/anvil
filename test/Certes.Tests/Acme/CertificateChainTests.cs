@@ -50,7 +50,20 @@ namespace Certes.Acme
                 File.ReadAllText("./Data/test-root.pem").Trim());
 
             var chain = new CertificateChain(pem);
-            Assert.Throws<AcmeException>(() => chain.ToPem());
+            Assert.Throws<AcmeException>(() => chain.ToPem(requireAllIssuers:true));
+        }
+
+        [Fact]
+        public void AllowMissingIssuer()
+        {
+            var pem =
+                string.Join(Environment.NewLine,
+                File.ReadAllText("./Data/leaf-cert.pem").Trim(),
+                File.ReadAllText("./Data/test-root.pem").Trim());
+
+            var chain = new CertificateChain(pem);
+            Assert.NotEmpty(chain.ToPem());
+            
         }
     }
 }
