@@ -3,9 +3,7 @@
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <LangVersion>Latest</LangVersion>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition="'$(TargetFramework)' != 'net462' AND '$(TargetFramework)' != 'net47'">True</PublicSign>
-    <AssemblyOriginatorKeyFile>../../misc/certes.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition="'$(APPVEYOR)' != ''">
     <CertesFileVersionSuffix>.$(APPVEYOR_BUILD_NUMBER)</CertesFileVersionSuffix>

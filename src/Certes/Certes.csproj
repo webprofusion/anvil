@@ -2,11 +2,11 @@
   <Import Project="../../misc/certes.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netstandard2.0;</TargetFrameworks>
-    <AssemblyVersion>2.3.9</AssemblyVersion>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.0;</TargetFrameworks>
+    <AssemblyVersion>2.4.0</AssemblyVersion>
     <AssemblyVersion Condition="$(CERTES_ASSEMBLYVERSION) != ''">$(CERTES_ASSEMBLYVERSION)</AssemblyVersion>
-    <Version>2.3.9</Version>
-    <FileVersion>2.3.9</FileVersion>
+    <Version>2.4.0</Version>
+    <FileVersion>2.4.0</FileVersion>
     <InformationalVersion>$(AssemblyVersion)$(CertesInformationalVersionSuffix)</InformationalVersion>
     <Authors>Certes Contributors</Authors>
     <Company />
@@ -21,7 +21,9 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Certes.xml</DocumentationFile>
     <PackageIcon>logo.png</PackageIcon>
     <PackageId>Webprofusion.Certes</PackageId>
-    <AssemblyName>Certes</AssemblyName>
+    <AssemblyName>Webprofusion.Certes</AssemblyName>
+    <SignAssembly>False</SignAssembly>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,10 +34,6 @@
     <None Remove="Resources\Certificates\dst-root-ca-x3.pem" />
     <None Remove="Resources\Certificates\fake-le-root-x1.pem" />
     <None Remove="Resources\Certificates\isrg-root-x1.pem" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\misc\AssemblyInfo.Shared.cs" Link="Properties\AssemblyInfo.Shared.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +65,14 @@
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugType>Full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
 </Project>
