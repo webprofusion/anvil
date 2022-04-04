@@ -10,7 +10,10 @@ using Org.BouncyCastle.Security;
 
 namespace Certes.Crypto
 {
-    internal class KeyAlgorithmProvider
+    /// <summary>
+    /// Provider for known key algorithms
+    /// </summary>
+    public class KeyAlgorithmProvider
     {
         private static readonly Dictionary<KeyAlgorithm, IKeyAlgorithm> keyAlgorithms = new Dictionary<KeyAlgorithm, IKeyAlgorithm>()
         {
@@ -20,9 +23,21 @@ namespace Certes.Crypto
             { KeyAlgorithm.RS256, new RS256Algorithm() },
         };
 
+        /// <summary>
+        /// Get signer for given algorithm
+        /// </summary>
+        /// <param name="algorithm"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public IKeyAlgorithm Get(KeyAlgorithm algorithm) =>
             keyAlgorithms.TryGetValue(algorithm, out var signer) ? signer : throw new ArgumentException(nameof(algorithm));
 
+        /// <summary>
+        /// Get key from the provider PEM
+        /// </summary>
+        /// <param name="pem"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
         public IKey GetKey(string pem)
         {
             using (var reader = new StringReader(pem))
@@ -41,13 +56,23 @@ namespace Certes.Crypto
             }
         }
 
+        /// <summary>
+        /// Get key from the provided DER bytes
+        /// </summary>
+        /// <param name="der"></param>
+        /// <returns></returns>
         public IKey GetKey(byte[] der)
         {
             var keyParam = PrivateKeyFactory.CreateKey(der);
             return ReadKey(keyParam);
         }
 
-        internal (KeyAlgorithm, AsymmetricCipherKeyPair) GetKeyPair(byte[] der)
+        /// <summary>
+        /// Get key pair from der
+        /// </summary>
+        /// <param name="der"></param>
+        /// <returns></returns>
+        public (KeyAlgorithm, AsymmetricCipherKeyPair) GetKeyPair(byte[] der)
         {
             var keyParam = PrivateKeyFactory.CreateKey(der);
             return ParseKey(keyParam);

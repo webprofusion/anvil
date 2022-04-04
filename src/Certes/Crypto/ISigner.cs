@@ -1,6 +1,9 @@
 ﻿namespace Certes.Crypto
 {
-    internal interface ISigner
+    /// <summary>
+    /// Cryptographic signer
+    /// </summary>
+    public interface ISigner
     {
         /// <summary>
         /// Computes the hash for given data.
