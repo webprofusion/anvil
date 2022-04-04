@@ -1,10 +1,10 @@
 # Certes
 
-**The project is a slight fork of https://github.com/fszlin/certes with packaging updates and feature updates.**
+**The project is a slight fork of https://github.com/fszlin/certes with packaging updates and minor feature updates.**
 The updated package is published to nuget as `Webprofusion.Certes`. 
 
 Certes is an [ACME](https://en.wikipedia.org/wiki/Automated_Certificate_Management_Environment)
-client runs on .NET 4..6.2+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
+client runs on .NET 4.6.2+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
 It is aimed to provide an easy to use API for managing certificates during deployment processes.
 
 ## Usage
@@ -17,13 +17,6 @@ or using .NET CLI:
 ```DOS
 dotnet add package Webprofusion.Certes
 ```
-
-[Let's Encrypt](https://letsencrypt.org/how-it-works/)
-is the primary CA we supported.
-It's recommend testing against
-[staging environment](https://letsencrypt.org/docs/staging-environment/)
-before using production environment, to avoid hitting the 
-[rate limits](https://letsencrypt.org/docs/rate-limits/).
 
 ## Account
 
@@ -107,10 +100,3 @@ var pfxBuilder = cert.ToPfx(privateKey);
 var pfx = pfxBuilder.Build("my-cert", "abcd1234");
 ```
 
-Check the [APIs](APIv2.md) for more details.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags](https://github.com/fszlin/certes/tags) on this repository. 
-
-Also check the [changelog](CHANGELOG.md) to see what's we are working on.
