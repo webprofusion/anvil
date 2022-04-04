@@ -66,7 +66,7 @@ namespace Certes.Acme
                 await Assert.ThrowsAsync<AcmeException>(() => client.ConsumeNonce());
             }
         }
-        
+
         [Fact]
         public async Task RetryOnBadNonce()
         {
@@ -88,7 +88,7 @@ namespace Certes.Acme
                     {
                         Status = AccountStatus.Valid
                     }, null, null));
-            
+
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
             var ctx = new AcmeContext(
                 WellKnownServers.LetsEncryptStagingV2,
@@ -144,7 +144,7 @@ namespace Certes.Acme
         {
             bool IsCertes(ProductInfoHeaderValue header)
             {
-                return header.Product.Name == "Certes" 
+                return header.Product.Name == "Certes"
                     && header.Product.Version == typeof(AcmeHttpClient).GetTypeInfo().Assembly.GetName().Version.ToString();
             }
 

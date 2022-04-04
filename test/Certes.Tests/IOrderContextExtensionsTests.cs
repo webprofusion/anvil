@@ -76,7 +76,7 @@ namespace Certes
                     },
                     Status = OrderStatus.Valid,
                 });
-            
+
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
             var certInfo = await orderCtxMock.Object.Generate(new CsrInfo
             {
@@ -200,7 +200,7 @@ namespace Certes
             var certDefaultLoc = new System.Uri("http://acme.d/order/101/cert/1234");
             var certAlternateLoc = new System.Uri("http://acme.d/order/101/cert/1234/1");
 
-            var alternates = new [] {
+            var alternates = new[] {
                 new {key = "alternate", value = certDefaultLoc},
                 new {key = "alternate", value = certAlternateLoc},
             }.ToLookup(x => x.key, x => x.value);
@@ -209,21 +209,21 @@ namespace Certes
 
             httpClientMock.Setup(m => m.Post<string>(certDefaultLoc, It.IsAny<object>()))
                 .ReturnsAsync(new AcmeHttpResponse<string>(
-                    accountLoc, 
+                    accountLoc,
                     defaultpem,
-                    alternates, 
+                    alternates,
                     null));
 
             httpClientMock.Setup(m => m.Post<string>(certAlternateLoc, It.IsAny<object>()))
                 .ReturnsAsync(new AcmeHttpResponse<string>(
-                    accountLoc, 
+                    accountLoc,
                     alternatepem,
-                    alternates, 
+                    alternates,
                     null));
 
             httpClientMock.Setup(m => m.Post<Order>(finalizeLoc, It.IsAny<object>()))
                 .ReturnsAsync(new AcmeHttpResponse<Order>(
-                    accountLoc, 
+                    accountLoc,
                     new Order
                     {
                         Identifiers = new[] {
@@ -231,7 +231,7 @@ namespace Certes
                         },
                         Status = OrderStatus.Valid,
                     },
-                    null, 
+                    null,
                     null));
 
 
@@ -249,7 +249,7 @@ namespace Certes
                 Finalize = finalizeLoc,
                 Status = OrderStatus.Pending,
             });
-            
+
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
             var certInfoDefaultRoot = await orderCtxMock.Object.Generate(new CsrInfo
             {

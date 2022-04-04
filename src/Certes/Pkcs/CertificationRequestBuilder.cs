@@ -131,7 +131,7 @@ namespace Certes.Pkcs
         /// <returns>
         /// The CSR data.
         /// </returns>
-        public byte[] Generate(bool requireOcspMustStaple  = false)
+        public byte[] Generate(bool requireOcspMustStaple = false)
         {
             var csr = GeneratePkcs10(requireOcspMustStaple);
             return csr.GetDerEncoded();

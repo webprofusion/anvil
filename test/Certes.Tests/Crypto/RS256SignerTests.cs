@@ -1,8 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Certes.Jws;
-using Certes.Pkcs;
 using Moq;
 using Xunit;
 

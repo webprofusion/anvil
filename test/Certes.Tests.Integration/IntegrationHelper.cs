@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Certes.Acme;
@@ -42,7 +41,7 @@ namespace Certes
         public static IAcmeHttpClient GetAcmeHttpClient(Uri uri) => Helper.CreateHttp(uri, http.Value);
 
         public static IAcmeHttpHandler GetAcmeHttpHandler(Uri uri) => new AcmeHttpHandler(uri, http.Value);
-        
+
         public static async Task<Uri> GetAcmeUriV1()
         {
             if (stagingServerV1 != null)

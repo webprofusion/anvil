@@ -71,7 +71,7 @@ namespace Certes
                 await client.RevokeCertificate(cert);
             }
         }
-        
+
         private static async Task AuthorizeDns(AcmeClient client, string name)
         {
             var authz = await client.NewAuthorization(new AuthorizationIdentifier

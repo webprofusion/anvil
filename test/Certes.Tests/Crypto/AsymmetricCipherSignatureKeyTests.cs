@@ -1,5 +1,4 @@
 ﻿using System;
-using Certes.Pkcs;
 using Xunit;
 
 namespace Certes.Crypto

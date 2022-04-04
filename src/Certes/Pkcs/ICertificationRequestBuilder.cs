@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Certes.Pkcs
+﻿namespace Certes.Pkcs
 {
     /// <summary>
     /// Supports building Certificate Signing Request (CSR).

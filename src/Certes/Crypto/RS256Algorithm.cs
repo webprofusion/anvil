@@ -10,7 +10,7 @@ namespace Certes.Crypto
 
         public IKey GenerateKey(int? keySize)
         {
-            if (keySize==null)
+            if (keySize == null)
             {
                 keySize = 2048;
             }

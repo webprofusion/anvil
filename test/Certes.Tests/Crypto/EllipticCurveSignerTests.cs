@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using Certes.Pkcs;
 using Xunit;
 
 namespace Certes.Crypto

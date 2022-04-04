@@ -31,7 +31,7 @@ namespace Certes.Acme
 
             var expectedPem =
                 key.ToPem().Trim() +
-                Environment.NewLine + 
+                Environment.NewLine +
                 pem +
                 Environment.NewLine +
                 File.ReadAllText("./Data/dst-root-ca-x3.pem").Trim();

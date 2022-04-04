@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Certes.Acme.Resource;
 using Certes.Pkcs;
 using Xunit;
 using Xunit.Abstractions;

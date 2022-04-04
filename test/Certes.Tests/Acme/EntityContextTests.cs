@@ -25,7 +25,7 @@ namespace Certes.Acme
                 .SetupGet(c => c.BadNonceRetryCount)
                 .Returns(1);
             ctxMock
-                .Setup(c => c.Sign(It.IsAny<object>(),  It.IsAny<Uri>()))
+                .Setup(c => c.Sign(It.IsAny<object>(), It.IsAny<Uri>()))
                 .Callback((object payload, Uri loc) =>
                 {
                     Assert.Null(payload);
