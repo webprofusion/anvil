@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Certes.Crypto;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Pkix;
@@ -70,11 +71,28 @@ namespace Certes.Pkcs
         /// </summary>
         /// <param name="friendlyName">The friendly name.</param>
         /// <param name="password">The password.</param>
+        /// <param name="useLegacyAlgorithms">If true, use default Pkcs12StoreBuilder cert and key algorithms, if false, use AES256 with SHA256 and HMAC-SHA256</param>
         /// <returns>The PFX data.</returns>
-        public byte[] Build(string friendlyName, string password)
+        public byte[] Build(string friendlyName, string password, bool useLegacyAlgorithms = false)
         {
             var keyPair = LoadKeyPair();
-            var store = new Pkcs12StoreBuilder().Build();
+
+            var builder = new Pkcs12StoreBuilder();
+
+            builder.SetCertAlgorithm(PkcsObjectIdentifiers.PbeWithShaAnd3KeyTripleDesCbc);
+
+            if (useLegacyAlgorithms)
+            {
+                // use key algorithm most compatible with older versions of OpenSSL etc
+                builder.SetKeyAlgorithm(Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.PbewithShaAnd40BitRC2Cbc);
+            }
+            else
+            {
+                // use more modern choice of key algorithm
+                builder.SetKeyAlgorithm(Org.BouncyCastle.Asn1.Nist.NistObjectIdentifiers.IdAes256Cbc, Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.IdHmacWithSha256);
+            }
+
+            var store = builder.Build();
 
             var entry = new X509CertificateEntry(certificate);
             store.SetCertificateEntry(friendlyName, entry);
