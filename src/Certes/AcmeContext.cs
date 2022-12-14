@@ -289,5 +289,44 @@ namespace Certes
         /// </returns>
         public IAuthorizationContext Authorization(Uri location)
             => new AuthorizationContext(this, location);
+
+        /// <summary>
+        /// Get renewal info for given certificate id
+        /// </summary>
+        /// <param name="certificateId">The CertID (see OCSP Cert ID, this is a base64url encoded hash of cert public key and serial)</param>
+        /// <returns></returns>
+        public async Task<AcmeRenewalInfo> GetRenewalInfo(string certificateId)
+        {
+            var uri = await this.GetResourceUri(d => d.RenewalInfo);
+
+            var resourceUri = new Uri($"{uri.ToString().TrimEnd('/')}/{certificateId}");
+
+            var resp = await HttpClient.Get<AcmeRenewalInfo>(resourceUri);
+
+            return resp.Resource;
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="certificateId"></param>
+        /// <param name="replaced"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateRenewalInfo(string certificateId, bool replaced)
+        {
+            var endpoint = await this.GetResourceUri(d => d.RenewalInfo);
+
+            var resp = await HttpClient.Post<RenewalUpdate>(endpoint, new RenewalUpdate { CertId = certificateId, Replaced = replaced });
+
+            if (resp.Error != null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }

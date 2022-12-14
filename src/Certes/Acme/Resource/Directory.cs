@@ -54,6 +54,15 @@ namespace Certes.Acme.Resource
         public Uri KeyChange { get; }
 
         /// <summary>
+        /// Gets or sets the optional renewalInfo endpoint  See https://datatracker.ietf.org/doc/draft-ietf-acme-ari/
+        /// </summary>
+        /// <value>
+        /// The metadata.
+        /// </value>
+        [JsonProperty("renewalInfo")]
+        public Uri RenewalInfo { get; }
+
+        /// <summary>
         /// Gets or sets the metadata.
         /// </summary>
         /// <value>
@@ -70,6 +79,7 @@ namespace Certes.Acme.Resource
         /// <param name="newOrder">The new order.</param>
         /// <param name="revokeCert">The revoke cert.</param>
         /// <param name="keyChange">The key change.</param>
+        /// <param name="renewalInfo">The renewal info.</param>
         /// <param name="meta">The meta.</param>
         public Directory(
             Uri newNonce,
@@ -77,6 +87,7 @@ namespace Certes.Acme.Resource
             Uri newOrder,
             Uri revokeCert,
             Uri keyChange,
+            Uri renewalInfo,
             DirectoryMeta meta)
         {
             NewNonce = newNonce;
@@ -84,6 +95,7 @@ namespace Certes.Acme.Resource
             NewOrder = newOrder;
             RevokeCert = revokeCert;
             KeyChange = keyChange;
+            RenewalInfo = renewalInfo;
             Meta = meta;
         }
     }
