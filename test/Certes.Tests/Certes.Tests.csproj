@@ -2,7 +2,7 @@
   <Import Project="../../misc/certes.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;net462;net47</TargetFrameworks>
+    <TargetFrameworks>net462;net47;net6.0;net7.0;</TargetFrameworks>
     <RootNamespace>Certes</RootNamespace>
     <NoWarn>1701;1702;1705;0618</NoWarn>
   </PropertyGroup>

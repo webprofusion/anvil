@@ -2,11 +2,11 @@
   <Import Project="../../misc/certes.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netstandard2.0;</TargetFrameworks>
-    <AssemblyVersion>2.4.1</AssemblyVersion>
+    <TargetFrameworks>netstandard2.0;net6.0;net7.0;</TargetFrameworks>
+    <AssemblyVersion>2.4.2</AssemblyVersion>
     <AssemblyVersion Condition="$(CERTES_ASSEMBLYVERSION) != ''">$(CERTES_ASSEMBLYVERSION)</AssemblyVersion>
-    <Version>2.4.1</Version>
-    <FileVersion>2.4.1</FileVersion>
+    <Version>2.4.2</Version>
+    <FileVersion>2.4.2</FileVersion>
     <InformationalVersion>$(AssemblyVersion)$(CertesInformationalVersionSuffix)</InformationalVersion>
     <Authors>Certes Contributors</Authors>
     <Company />
@@ -24,6 +24,8 @@
     <AssemblyName>Webprofusion.Certes</AssemblyName>
     <SignAssembly>False</SignAssembly>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <RootNamespace>Certes</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
