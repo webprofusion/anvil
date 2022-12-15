@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 
-## [2.4.2] - 2022-08-29
+## [2.4.2] - 2022-12-15
 - Add option to use intermediate closest to root when building PFX chain, instead of requiring a known root.
 
 ## [2.4.1] - 2022-08-29
