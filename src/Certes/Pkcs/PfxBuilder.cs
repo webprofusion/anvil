@@ -71,9 +71,10 @@ namespace Certes.Pkcs
         /// </summary>
         /// <param name="friendlyName">The friendly name.</param>
         /// <param name="password">The password.</param>
-        /// <param name="useLegacyAlgorithms">If true, use default Pkcs12StoreBuilder cert and key algorithms, if false, use AES256 with SHA256 and HMAC-SHA256</param>
+        /// <param name="useLegacyKeyAlgorithms">If true, use default Pkcs12StoreBuilder cert and key algorithms, if false, use AES256 with SHA256 and HMAC-SHA256</param>
+        /// <param name="allowBuildWithoutKnownRoot">If true, cert chain </param>
         /// <returns>The PFX data.</returns>
-        public byte[] Build(string friendlyName, string password, bool useLegacyAlgorithms = false)
+        public byte[] Build(string friendlyName, string password, bool useLegacyKeyAlgorithms = true, bool allowBuildWithoutKnownRoot = false)
         {
             var keyPair = LoadKeyPair();
 
@@ -81,7 +82,7 @@ namespace Certes.Pkcs
 
             builder.SetCertAlgorithm(PkcsObjectIdentifiers.PbeWithShaAnd3KeyTripleDesCbc);
 
-            if (useLegacyAlgorithms)
+            if (useLegacyKeyAlgorithms)
             {
                 // use key algorithm most compatible with older versions of OpenSSL etc
                 builder.SetKeyAlgorithm(Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.PbewithShaAnd40BitRC2Cbc);
@@ -99,7 +100,7 @@ namespace Certes.Pkcs
 
             if (FullChain && !certificate.IssuerDN.Equivalent(certificate.SubjectDN))
             {
-                var certChain = FindIssuers();
+                var certChain = BuildCertChain();
                 var certChainEntries = certChain.Select(c => new X509CertificateEntry(c)).ToList();
                 certChainEntries.Add(entry);
 
@@ -117,7 +118,7 @@ namespace Certes.Pkcs
             }
         }
 
-        private IList<X509Certificate> FindIssuers()
+        private IList<X509Certificate> BuildCertChain(bool allowBuildWithoutKnownRoot = false)
         {
             var certParser = new X509CertificateParser();
             var certificates = certificateStore
@@ -131,6 +132,7 @@ namespace Certes.Pkcs
 
             var rootCerts = new HashSet(certificates.Where(c => c.IsRoot).Select(c => new TrustAnchor(c.Cert, null)));
             var intermediateCerts = certificates.Where(c => !c.IsRoot).Select(c => c.Cert).ToList();
+            
             intermediateCerts.Add(certificate);
 
             var target = new X509CertStoreSelector
@@ -138,10 +140,30 @@ namespace Certes.Pkcs
                 Certificate = certificate
             };
 
-            var builderParams = new PkixBuilderParameters(rootCerts, target)
+            PkixBuilderParameters builderParams;
+
+            // by default, use a known root to build our chain
+            builderParams = new PkixBuilderParameters(rootCerts, target)
             {
                 IsRevocationEnabled = false
             };
+
+            if (allowBuildWithoutKnownRoot && rootCerts.Count == 0)
+            {
+                // no matching roots known, use the best intermediate (non-root intermediate in our list which is not issued by another item in the list)
+
+                // find intermediates closest to root, where subject is not an issuer we have in our list of intermediates
+                var intermediateClosestToRoot = intermediateCerts
+                    .Where(c => !intermediateCerts.Any(i => i.SubjectDN.ToString() == c.IssuerDN.ToString()))
+                    .FirstOrDefault();
+
+                var intermediateHashSet = new HashSet(new List<TrustAnchor> { new TrustAnchor(intermediateClosestToRoot, null) });
+
+                builderParams = new PkixBuilderParameters(intermediateHashSet, target)
+                {
+                    IsRevocationEnabled = false
+                };
+            }
 
             builderParams.AddStore(
                 X509StoreFactory.Create(

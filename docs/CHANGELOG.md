@@ -1,21 +1,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.3.5] - 2021-07-13
+
+## [2.4.2] - 2022-08-29
+- Add option to use intermediate closest to root when building PFX chain, instead of requiring a known root.
+
+## [2.4.1] - 2022-08-29
+- Add option for modern algs during PFX build to support OpenSSL 3.x compatibility by default
+
+## [2.4.0] - 2022-04-04
+- Target .net 6
+- Make key alg public
+- Remove strong naming
+
+## [2.3.9] - 2021-10-21
+- Relax dependency versions
+
+## [2.3.8] - 2021-09-03
+- Add CSR option for OCSP Must Staple
+- EC keys don't support KeyEncipherment usage attribute
+
+## [2.3.7] - 2021-07-22
+- Optionally require all issuers in GetIssuers (e.g. don't throw an exception if issuer not found)
+- Update support for different RSA key sizes
+
+## [2.3.6] - 2021-07-13
 ### Added
 - Support alternate RSA key sizes
 ### Changed
 - Make AcmeException optional for GetIssuers if issuer not found in local store
+
 ## [2.3.5] - 2021-03-17
 ### Added
 - Support alternate link relations ak.a Preferred Chain ([#232][i232])
 - Implement external account binding support (library). ([#231][i231])
 ### Changed
 - Packaging fork to *Webprofusion.Certes* nuget package.
+
 ## [2.3.4] - 2020-03-27
 ### Changed
 - Add user-agent header to HTTP requests
-- Removed support for `netstanard1.3`
+- Removed support for `netstandard1.3`
 - [CLI] Upgrade to `netcoreapp3.1`
 ### Added
 - [CLI] Add options for algorithm in order finalize method
