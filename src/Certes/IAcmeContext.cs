@@ -52,6 +52,17 @@ namespace Certes
         Task<IAccountContext> Account();
 
         /// <summary>
+        /// Get cached Account URI or fetch via ACME
+        /// </summary>
+        /// <returns></returns>
+        Task<Uri> GetAccountUri();
+
+        /// <summary>
+        /// Set cached account URI
+        /// </summary>
+        void SetAccountUri(Uri accountUri);
+
+        /// <summary>
         /// Gets the ACME directory.
         /// </summary>
         /// <param name="throwOnError">If true, throw an AcmeException if we can't fetch the directory or we get an Error response</param>

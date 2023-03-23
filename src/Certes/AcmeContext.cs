@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,21 +53,28 @@ namespace Certes
         public IKey AccountKey { get; private set; }
 
         /// <summary>
+        /// Optional account uri, can be derived via ACME otherwise
+        /// </summary>
+        private Uri accountUri { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AcmeContext" /> class.
         /// </summary>
         /// <param name="directoryUri">The directory URI.</param>
         /// <param name="accountKey">The account key.</param>
         /// <param name="http">The HTTP client.</param>
         /// <param name="badNonceRetryCount">The number of retries on a bad nonce.</param>
+        /// <param name="accountUri">Optional account URI.</param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="directoryUri"/> is <c>null</c>.
         /// </exception>
-        public AcmeContext(Uri directoryUri, IKey accountKey = null, IAcmeHttpClient http = null, int badNonceRetryCount = 1)
+        public AcmeContext(Uri directoryUri, IKey accountKey = null, IAcmeHttpClient http = null, int badNonceRetryCount = 1, Uri accountUri = null)
         {
             DirectoryUri = directoryUri ?? throw new ArgumentNullException(nameof(directoryUri));
             AccountKey = accountKey ?? KeyFactory.NewKey(defaultKeyType);
             HttpClient = http ?? new AcmeHttpClient(directoryUri);
             BadNonceRetryCount = badNonceRetryCount;
+            this.accountUri = accountUri;
         }
 
         /// <summary>
@@ -86,6 +93,23 @@ namespace Certes
         }
 
         /// <summary>
+        /// Get AccountUri if known, or fetch via ACME
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Uri> GetAccountUri()
+        {
+            if (accountUri != null)
+            {
+                return accountUri;
+            }
+            else
+            {
+                accountUri = await Account().Location();
+                return accountUri;
+            }
+        }
+
+        /// <summary>
         /// Changes the account key.
         /// </summary>
         /// <param name="key">The new account key.</param>
@@ -93,7 +117,7 @@ namespace Certes
         public async Task<Account> ChangeKey(IKey key)
         {
             var endpoint = await this.GetResourceUri(d => d.KeyChange);
-            var location = await Account().Location();
+            var location = await GetAccountUri();
 
             var newKey = key ?? KeyFactory.NewKey(defaultKeyType);
             var keyChange = new
@@ -265,7 +289,7 @@ namespace Certes
         public async Task<JwsPayload> Sign(object entity, Uri uri)
         {
             var nonce = await HttpClient.ConsumeNonce();
-            var location = await Account().Location();
+            var location = await GetAccountUri();
             var jws = new JwsSigner(AccountKey);
             return jws.Sign(entity, location, uri, nonce);
         }
@@ -327,6 +351,15 @@ namespace Certes
             {
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Set cached accountURI
+        /// </summary>
+        /// <param name="accountUri"></param>
+        public void SetAccountUri(Uri accountUri)
+        {
+            this.accountUri = accountUri;
         }
     }
 }
