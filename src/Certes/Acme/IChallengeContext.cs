@@ -35,6 +35,6 @@ namespace Certes.Acme
         /// Acknowledges the ACME server the challenge is ready for validation.
         /// </summary>
         /// <returns>The challenge.</returns>
-        Task<Resource.Challenge> Validate();
+        Task<Resource.Challenge> Validate(object payload = null);
     }
 }

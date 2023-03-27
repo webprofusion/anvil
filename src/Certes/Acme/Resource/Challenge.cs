@@ -83,5 +83,26 @@ namespace Certes.Acme.Resource
         [JsonProperty("keyAuthorization")]
         [Obsolete("Removed from ACME server.")]
         public string KeyAuthorization { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tkauth-type (for acme-authority-token) for applicable ACME challenges.
+        /// </summary>
+        /// <value>
+        /// The tkauth-type, if present, e.g. "atc"
+        /// </value>
+        [JsonProperty("tkauth-type")]
+
+        public string TkAuthType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the token authority for acme-authority-token
+        /// </summary>
+        /// <value>
+        /// The token authority, if applicable
+        /// </value>
+        [JsonProperty("token-authority")]
+
+        public string TokenAuthority { get; set; }
+
     }
 }

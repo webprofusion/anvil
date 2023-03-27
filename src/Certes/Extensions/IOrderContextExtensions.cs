@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Certes.Acme;
 using Certes.Acme.Resource;
@@ -35,7 +35,8 @@ namespace Certes
                 builder.AddName("CN", builder.SubjectAlternativeNames[0]);
             }
 
-            return await context.Finalize(builder.Generate(csr.RequireOcspMustStaple));
+            var csrBytes = builder.Generate(csr.RequireOcspMustStaple);
+            return await context.Finalize(csrBytes);
         }
 
         /// <summary>

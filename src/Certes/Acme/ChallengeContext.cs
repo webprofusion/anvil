@@ -58,9 +58,9 @@ namespace Certes.Acme
         /// <returns>
         /// The challenge.
         /// </returns>
-        public async Task<Challenge> Validate()
+        public async Task<Challenge> Validate(object payload = null)
         {
-            var resp = await Context.HttpClient.Post<Challenge>(Context, Location, new { }, true);
+            var resp = await Context.HttpClient.Post<Challenge>(Context, Location, payload ?? new { }, true);
             return resp.Resource;
         }
     }

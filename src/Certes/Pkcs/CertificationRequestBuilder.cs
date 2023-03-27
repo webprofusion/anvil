@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Certes.Crypto;
@@ -8,6 +8,7 @@ using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.X509;
 
 namespace Certes.Pkcs
 {
@@ -133,8 +134,7 @@ namespace Certes.Pkcs
         /// </returns>
         public byte[] Generate(bool requireOcspMustStaple = false)
         {
-            var csr = GeneratePkcs10(requireOcspMustStaple);
-            return csr.GetDerEncoded();
+            return GeneratePkcs10(requireOcspMustStaple);
         }
 
         /// <summary>

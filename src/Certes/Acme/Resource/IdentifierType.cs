@@ -21,5 +21,11 @@ namespace Certes.Acme.Resource
         /// </summary>
         [EnumMember(Value = "ip")]
         Ip,
+
+        /// <summary>
+        /// The TNAuthList type (Telephone Number Authority List Authority Token) https://datatracker.ietf.org/doc/html/draft-ietf-acme-authority-token-tnauthlist-13 
+        /// </summary>
+        [EnumMember(Value = "TNAuthList")]
+        TNAuthList
     }
 }

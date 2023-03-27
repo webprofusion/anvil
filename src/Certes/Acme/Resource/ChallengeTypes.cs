@@ -22,5 +22,10 @@
         /// The tls-alpn-01 challenge name.
         /// </value>
         public static string TlsAlpn01 { get; } = "tls-alpn-01";
+
+        /// <summary>
+        /// The tkauth-01 challenge.
+        /// </summary>
+        public const string TkAuth01 = "tkauth-01";
     }
 }
