@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Jws;
 using Certify.ACME.Anvil.Pkcs;
+using Certify.ACME.Anvil.Tests;
 using Xunit;
 using ChallengeTypes = Certify.ACME.Anvil.Acme.Resource.ChallengeTypes;
-using Certify.ACME.Anvil.Tests;
 
 namespace Certify.ACME.Anvil
 {
@@ -38,24 +38,23 @@ namespace Certify.ACME.Anvil
         {
             var accountKey = await Helper.LoadkeyV1();
             var csr = new CertificationRequestBuilder();
-            csr.AddName("C=CA, ST=Ontario, L=Toronto, O=Certes, OU=Dev, CN=www.certes-ci.dymetis.com");
-            csr.SubjectAlternativeNames.Add("mail.certes-ci.dymetis.com");
-            csr.SubjectAlternativeNames.Add("sso.certes-ci.dymetis.com");
+            csr.SubjectAlternativeNames.Add(Helper.TestDomain1);
+            csr.SubjectAlternativeNames.Add(Helper.TestDomain1);
 
             var dirUri = await IntegrationHelper.GetAcmeUriV1();
             using (var client = new AcmeClient(IntegrationHelper.GetAcmeHttpHandler(dirUri)))
             {
                 client.Use(accountKey.Export());
 
-                await AuthorizeDns(client, "www.certes-ci.dymetis.com");
-                await AuthorizeDns(client, "mail.certes-ci.dymetis.com");
-                await AuthorizeDns(client, "sso.certes-ci.dymetis.com");
+                await AuthorizeDns(client, Helper.TestDomain1);
+                await AuthorizeDns(client, Helper.TestDomain2);
+                await AuthorizeDns(client, Helper.TestDomain3);
 
                 // should returns the valid ID
                 var authz = await client.NewAuthorization(new AuthorizationIdentifier
                 {
                     Type = AuthorizationIdentifierTypes.Dns,
-                    Value = "www.certes-ci.dymetis.com",
+                    Value = Helper.TestDomain1,
                 });
 
                 Assert.Equal(EntityStatus.Valid, authz.Data.Status);

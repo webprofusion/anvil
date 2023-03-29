@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Xunit;
 using Certify.ACME.Anvil.Tests;
+using Xunit;
 
 namespace Certify.ACME.Anvil.Pkcs
 {

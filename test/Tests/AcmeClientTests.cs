@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Json;
 using Certify.ACME.Anvil.Jws;
+using Certify.ACME.Anvil.Tests;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
-using Certify.ACME.Anvil.Tests;
 
 namespace Certify.ACME.Anvil
 {

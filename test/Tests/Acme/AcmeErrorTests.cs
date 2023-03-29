@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Certify.ACME.Anvil.Acme.Resource;
-using Xunit;
 using Certify.ACME.Anvil.Tests;
+using Xunit;
 
 namespace Certify.ACME.Anvil.Acme
 {

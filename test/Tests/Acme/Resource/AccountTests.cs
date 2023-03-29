@@ -2,9 +2,9 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using Certify.ACME.Anvil.Json;
+using Certify.ACME.Anvil.Tests;
 using Newtonsoft.Json;
 using Xunit;
-using Certify.ACME.Anvil.Tests;
 
 namespace Certify.ACME.Anvil.Acme.Resource
 {

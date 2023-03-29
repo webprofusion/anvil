@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using Certify.ACME.Anvil.Properties;
 using Xunit;
 
 namespace Certify.ACME.Anvil.Properties

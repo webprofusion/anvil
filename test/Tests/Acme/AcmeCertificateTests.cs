@@ -1,6 +1,6 @@
 ﻿using System;
-using Xunit;
 using Certify.ACME.Anvil.Tests;
+using Xunit;
 namespace Certify.ACME.Anvil.Acme
 {
     public class AcmeCertificateTests

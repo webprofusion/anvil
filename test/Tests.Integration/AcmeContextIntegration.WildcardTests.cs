@@ -1,11 +1,11 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Pkcs;
+using Certify.ACME.Anvil.Tests;
 using Xunit;
 using Xunit.Abstractions;
-
-using static Certify.ACME.Anvil.Tests.Helper;
 using static Certify.ACME.Anvil.IntegrationHelper;
+using static Certify.ACME.Anvil.Tests.Helper;
 
 namespace Certify.ACME.Anvil
 {
@@ -22,18 +22,13 @@ namespace Certify.ACME.Anvil
             public async Task CanGenerateWildcard()
             {
                 var dirUri = await GetAcmeUriV2();
-                var hosts = new[] { $"*.wildcard-{DomainSuffix}.es256.certes-ci.dymetis.com" };
+                var hosts = new[] { $"*.wildcard-{DomainSuffix}.es256.{Helper.TestCI_Domain1}" };
                 var ctx = new AcmeContext(dirUri, GetKeyV2(), http: GetAcmeHttpClient(dirUri));
 
                 var orderCtx = await AuthzDns(ctx, hosts);
                 var certKey = KeyFactory.NewKey(KeyAlgorithm.RS256);
                 var finalizedOrder = await orderCtx.Finalize(new CsrInfo
                 {
-                    CountryName = "CA",
-                    State = "Ontario",
-                    Locality = "Toronto",
-                    Organization = "Certes",
-                    OrganizationUnit = "Dev",
                     CommonName = hosts[0],
                 }, certKey);
                 var pem = await orderCtx.Download(null);

@@ -132,7 +132,7 @@ namespace Certify.ACME.Anvil.Pkcs
 
             var rootCerts = new HashSet(certificates.Where(c => c.IsRoot).Select(c => new TrustAnchor(c.Cert, null)));
             var intermediateCerts = certificates.Where(c => !c.IsRoot).Select(c => c.Cert).ToList();
-            
+
             intermediateCerts.Add(certificate);
 
             var target = new X509CertStoreSelector

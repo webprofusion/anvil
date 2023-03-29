@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Certify.ACME.Anvil.Tests;
+﻿using Certify.ACME.Anvil.Tests;
+using Xunit;
 namespace Certify.ACME.Anvil.Jws
 {
     public class RsaJsonWebKeyTests

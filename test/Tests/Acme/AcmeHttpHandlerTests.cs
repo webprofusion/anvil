@@ -4,11 +4,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Certify.ACME.Anvil.Tests;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using Xunit;
-using Certify.ACME.Anvil.Tests;
 
 namespace Certify.ACME.Anvil.Acme
 {

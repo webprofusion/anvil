@@ -1,9 +1,6 @@
-using System.IO;
 using Xunit;
-using Certify.ACME.Anvil.Acme;
 
 #if !NETCOREAPP1_0
-using System.Runtime.Serialization.Formatters.Binary;
 #endif
 
 namespace Certify.ACME.Anvil

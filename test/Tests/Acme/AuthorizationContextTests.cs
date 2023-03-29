@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme.Resource;
 using Certify.ACME.Anvil.Jws;
+using Certify.ACME.Anvil.Tests;
 using Moq;
 using Xunit;
-using Certify.ACME.Anvil.Tests;
 
 namespace Certify.ACME.Anvil.Acme
 {

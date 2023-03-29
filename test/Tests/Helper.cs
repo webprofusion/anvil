@@ -98,8 +98,8 @@ namespace Certify.ACME.Anvil.Tests
 
             using (var http = new HttpClient())
             {
-                var cert = await http.GetStringAsync("http://certes-ci.dymetis.com/cert-data");
-                var key = await http.GetStringAsync("http://certes-ci.dymetis.com/cert-key");
+                var cert = await http.GetStringAsync($"http://{Helper.TestCI_Domain1}/cert-data");
+                var key = await http.GetStringAsync($"http://{Helper.TestCI_Domain1}/cert-key");
 
                 validCertificate = (cert, key);
                 return validCertificate.Value;

@@ -5,11 +5,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
+using Certify.ACME.Anvil.Tests;
 using Xunit;
 using Xunit.Abstractions;
-
-using static Certify.ACME.Anvil.Tests.Helper;
 using static Certify.ACME.Anvil.IntegrationHelper;
+using static Certify.ACME.Anvil.Tests.Helper;
 
 namespace Certify.ACME.Anvil
 {
@@ -32,7 +32,7 @@ namespace Certify.ACME.Anvil
         protected async Task CanGenerateCertificateWithEC(KeyAlgorithm algo)
         {
             var dirUri = await GetAcmeUriV2();
-            var hosts = new[] { $"www-ec-{DomainSuffix}.{algo}.certes-ci.dymetis.com".ToLower() };
+            var hosts = new[] { $"www-ec-{DomainSuffix}.{algo}.{Helper.TestCI_Domain1}".ToLower() };
             var ctx = new AcmeContext(dirUri, GetKeyV2(algo), http: GetAcmeHttpClient(dirUri));
             var orderCtx = await AuthorizeHttp(ctx, hosts);
 

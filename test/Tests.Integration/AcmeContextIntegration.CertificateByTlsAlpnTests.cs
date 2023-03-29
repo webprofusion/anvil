@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
 using Certify.ACME.Anvil.Json;
+using Certify.ACME.Anvil.Tests;
 using Newtonsoft.Json;
 using Org.BouncyCastle.X509;
 using Xunit;
 using Xunit.Abstractions;
-
-using static Certify.ACME.Anvil.Tests.Helper;
 using static Certify.ACME.Anvil.IntegrationHelper;
+using static Certify.ACME.Anvil.Tests.Helper;
 
 namespace Certify.ACME.Anvil
 {
@@ -29,7 +29,7 @@ namespace Certify.ACME.Anvil
             public async Task CanGenerateCertificateTlsAlpn()
             {
                 var dirUri = await GetAcmeUriV2();
-                var hosts = new[] { $"{DomainSuffix}.tls-alpn.certes-ci.dymetis.com" };
+                var hosts = new[] { $"{DomainSuffix}.tls-alpn.{Helper.TestDomain1}" };
                 var ctx = new AcmeContext(dirUri, GetKeyV2(), http: GetAcmeHttpClient(dirUri));
                 var orderCtx = await ctx.NewOrder(hosts);
                 var order = await orderCtx.Resource();
@@ -71,15 +71,7 @@ namespace Certify.ACME.Anvil
                 }
 
                 var certKey = KeyFactory.NewKey(KeyAlgorithm.RS256);
-                var finalizedOrder = await orderCtx.Finalize(new CsrInfo
-                {
-                    CountryName = "CA",
-                    State = "Ontario",
-                    Locality = "Toronto",
-                    Organization = "Certes",
-                    OrganizationUnit = "Dev",
-                    CommonName = hosts[0],
-                }, certKey);
+                var finalizedOrder = await orderCtx.Finalize(new CsrInfo(), certKey);
                 var certChain = await orderCtx.Download(null);
 
                 var pfxBuilder = certChain.ToPfx(certKey);

@@ -11,10 +11,10 @@
     <Title>$(Product)</Title>
     <Description>A client implementation for the Automated Certificate Management Environment (ACME) protocol. This package is a fork of the excellent https://github.com/fszlin/certes project with updated packaging, feature updates and experimental extensions. Used by https://certifytheweb.com</Description>
     <PackageTags>ACME;letsencrypt;HTTPS;SSL;Certificate</PackageTags>
-    <PackageProjectUrl>https://github.com/webprofusion/certes</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/webprofusion/anvil</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/webprofusion/certes</RepositoryUrl>
+    <RepositoryUrl>https://github.com/webprofusion/anvil</RepositoryUrl>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Certify.ACME.xml</DocumentationFile>
     <PackageIcon>logo.png</PackageIcon>
     <PackageId>Webprofusion.Certify.ACME.Anvil</PackageId>

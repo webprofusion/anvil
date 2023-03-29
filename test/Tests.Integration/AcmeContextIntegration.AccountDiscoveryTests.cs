@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
-
-using static Certify.ACME.Anvil.Tests.Helper;
 using static Certify.ACME.Anvil.IntegrationHelper;
+using static Certify.ACME.Anvil.Tests.Helper;
 
 namespace Certify.ACME.Anvil
 {

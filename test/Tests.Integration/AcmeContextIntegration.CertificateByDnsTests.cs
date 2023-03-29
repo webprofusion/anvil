@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Certify.ACME.Anvil.Pkcs;
+using Certify.ACME.Anvil.Tests;
 using Xunit;
 using Xunit.Abstractions;
-
-using static Certify.ACME.Anvil.Tests.Helper;
 using static Certify.ACME.Anvil.IntegrationHelper;
+using static Certify.ACME.Anvil.Tests.Helper;
 
 namespace Certify.ACME.Anvil
 {
@@ -22,7 +22,7 @@ namespace Certify.ACME.Anvil
             {
                 var dirUri = await GetAcmeUriV2();
 
-                var hosts = new[] { $"www-dns-{DomainSuffix}.es256.certes-ci.dymetis.com", $"mail-dns-{DomainSuffix}.es256.certes-ci.dymetis.com" };
+                var hosts = new[] { $"www-dns-{DomainSuffix}.{Helper.TestDomain1}", $"mail-dns-{DomainSuffix}.es256.{Helper.TestDomain2}" };
                 var ctx = new AcmeContext(dirUri, GetKeyV2(), http: GetAcmeHttpClient(dirUri));
                 var orderCtx = await AuthzDns(ctx, hosts);
                 while (orderCtx == null)
@@ -32,7 +32,6 @@ namespace Certify.ACME.Anvil
                 }
 
                 var csr = new CertificationRequestBuilder();
-                csr.AddName($"C=CA, ST=Ontario, L=Toronto, O=Certes, OU=Dev, CN={hosts[0]}");
                 foreach (var h in hosts)
                 {
                     csr.SubjectAlternativeNames.Add(h);

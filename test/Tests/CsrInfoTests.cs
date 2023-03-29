@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Certify.ACME.Anvil;
 using Xunit;
 
 namespace Certify.ACME.Anvil

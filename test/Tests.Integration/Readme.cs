@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme.Resource;
-using Xunit;
 using Certify.ACME.Anvil.Tests;
+using Xunit;
 
 namespace Certify.ACME.Anvil
 {

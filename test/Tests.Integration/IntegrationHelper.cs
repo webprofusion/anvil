@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Pkcs;
-using Newtonsoft.Json;
 using Certify.ACME.Anvil.Tests;
+using Newtonsoft.Json;
 
 namespace Certify.ACME.Anvil
 {
@@ -17,9 +17,7 @@ namespace Certify.ACME.Anvil
 
         private static Uri[] StagingServersV1 = new[]
         {
-            //new Uri("https://lo0.in:4430/directory"),
-            new Uri("https://boulder-certes-ci.dymetis.com:4430/directory"),
-            //WellKnownServers.LetsEncryptStaging,
+            new Uri("https://boulder:4430/directory")
         };
 
         public static readonly Lazy<HttpClient> http = new Lazy<HttpClient>(() =>
@@ -96,9 +94,7 @@ namespace Certify.ACME.Anvil
             }
 
             var servers = new[] {
-                //new Uri("https://lo0.in:4431/directory"),
-                new Uri("https://boulder-certes-ci.dymetis.com:4431/directory"),
-                //WellKnownServers.LetsEncryptStagingV2,
+                new Uri("https://boulder:4431/directory"),
             };
 
             var exceptions = new List<Exception>();
@@ -133,7 +129,7 @@ namespace Certify.ACME.Anvil
 
         public static async Task DeployDns01(KeyAlgorithm algo, Dictionary<string, string> tokens)
         {
-            using (await http.Value.PutAsync($"http://certes-ci.dymetis.com/dns-01/{algo}", new StringContent(JsonConvert.SerializeObject(tokens)))) { }
+            using (await http.Value.PutAsync($"http://{Helper.TestCI_Domain1}/dns-01/{algo}", new StringContent(JsonConvert.SerializeObject(tokens)))) { }
         }
 
         public static void AddTestCert(this PfxBuilder pfx) => pfx.AddIssuers(TestCertificates);
