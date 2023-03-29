@@ -1,7 +1,8 @@
 # Certify.ACME.Anvil
 
-**The project is a fork of https://github.com/fszlin/certes with packaging updates, feature updates and experimental extensions.**
-The updated package is published to nuget as `Webprofusion.Certes`. 
+**The project is a fork of https://github.com/fszlin/certes with packaging updates, feature updates and experimental extensions.** 
+
+This library is mainly used by https://certifytheweb.com and is subject to changes required by that application.
 
 ## Account
 
