@@ -1,8 +1,8 @@
 # Implementation Status
 
-This document details the ACME resources and flows implemented by *Certes*.
+This document details the ACME resources and flows implemented:
 
-| Resource      | Action                    | Spec [draft-07][spec-07] | Boulder | Certes |
+| Resource      | Action                    | Spec [draft-07][spec-07] | Boulder | Certify.ACME.Anvil |
 | :---          | :---                      | :---: | :---: | :---: |
 | Directory     | get                       | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 | Nonce         | new                       | :heavy_check_mark: | | |

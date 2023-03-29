@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <LangVersion>Latest</LangVersion>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SkipSigning)' == 'true'">
+    <SignAssembly>false</SignAssembly>
+    <PublicSign>false</PublicSign>
+    <DefineConstants>$(DefineConstants);SKIP_SIGNING</DefineConstants>
+  </PropertyGroup>
+</Project>

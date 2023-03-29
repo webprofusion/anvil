@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.0.0]
+- Renamed fork as Certify.ACME.Anvil to avoid confusion with the original Certes library
+- Implement support for tkauth-01, TnAuthList challenges and TnAuthList CSRs
 
 ## [2.4.2] - 2022-12-15
 - Add option to use intermediate closest to root when building PFX chain, instead of requiring a known root.
