@@ -1,8 +1,8 @@
-# Certify.ACME.Anvil
+## Certify.ACME.Anvil
 
 **The project is a fork of https://github.com/fszlin/certes with packaging updates, feature updates and experimental extensions.** 
 
-This library is mainly used by https://certifytheweb.com and is subject to changes required by that application.
+This library is an ACME client implementation primarily used by https://certifytheweb.com and is subject to changes required by that application.
 
 ## Account
 
