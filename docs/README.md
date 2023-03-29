@@ -1,22 +1,7 @@
-# Certes
+# Certify.ACME.Anvil
 
-**The project is a slight fork of https://github.com/fszlin/certes with packaging updates and minor feature updates.**
+**The project is a fork of https://github.com/fszlin/certes with packaging updates, feature updates and experimental extensions.**
 The updated package is published to nuget as `Webprofusion.Certes`. 
-
-Certes is an [ACME](https://en.wikipedia.org/wiki/Automated_Certificate_Management_Environment)
-client runs on .NET 4.6.2+ and .NET Standard 2.0+, supports ACME v2 and wildcard certificates.
-It is aimed to provide an easy to use API for managing certificates during deployment processes.
-
-## Usage
-
-Install [Certes](https://www.nuget.org/packages/Webprofusion.Certes/) nuget package into your project:
-```PowerShell
-Install-Package Webprofusion.Certes
-```
-or using .NET CLI:
-```DOS
-dotnet add package Webprofusion.Certes
-```
 
 ## Account
 

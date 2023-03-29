@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../misc/Certify.ACME.Anvil.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net7.0;</TargetFrameworks>
+    <AssemblyVersion>3.0.0</AssemblyVersion>
+    <Version>3.0.0</Version>
+    <FileVersion>3.0.0</FileVersion>
+    <Authors>Webprofusion,  https://github.com/fszlin/certes Contributors</Authors>
+    <Product>Certify.ACME.Anvil Client</Product>
+    <Title>$(Product)</Title>
+    <Description>A client implementation for the Automated Certificate Management Environment (ACME) protocol. This package is a fork of the excellent https://github.com/fszlin/certes project with updated packaging, feature updates and experimental extensions. Used by https://certifytheweb.com</Description>
+    <PackageTags>ACME;letsencrypt;HTTPS;SSL;Certificate</PackageTags>
+    <PackageProjectUrl>https://github.com/webprofusion/certes</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/webprofusion/certes</RepositoryUrl>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Certify.ACME.xml</DocumentationFile>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageId>Webprofusion.Certify.ACME.Anvil</PackageId>
+    <AssemblyName>Certify.ACME.Anvil</AssemblyName>
+    <SignAssembly>False</SignAssembly>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <RootNamespace>Certify.ACME.Anvil</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\misc\logo.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Certificates\dst-root-ca-x3.pem" />
+    <None Remove="Resources\Certificates\fake-le-root-x1.pem" />
+    <None Remove="Resources\Certificates\isrg-root-x1.pem" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Certificates\dst-root-ca-x3.pem" />
+    <EmbeddedResource Include="Resources\Certificates\fake-le-root-x1.pem" />
+    <EmbeddedResource Include="Resources\Certificates\isrg-root-x1.pem" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.*" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net452'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
+
+</Project>
