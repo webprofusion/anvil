@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -332,26 +332,25 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
-        /// 
+        /// Update ARI renewal info
         /// </summary>
         /// <param name="certificateId"></param>
         /// <param name="replaced"></param>
         /// <returns></returns>
-        public async Task<bool> UpdateRenewalInfo(string certificateId, bool replaced)
+        public async Task UpdateRenewalInfo(string certificateId, bool replaced)
         {
+
             var endpoint = await this.GetResourceUri(d => d.RenewalInfo);
 
-            var resp = await HttpClient.Post<RenewalUpdate>(endpoint, new RenewalUpdate { CertId = certificateId, Replaced = replaced });
+            var body = new
+            {
+                certID = certificateId,
+                replaced = replaced
+            };
 
-            if (resp.Error != null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            await HttpClient.Post<string>(this, endpoint, body, true);
         }
+
 
         /// <summary>
         /// Set cached accountURI
