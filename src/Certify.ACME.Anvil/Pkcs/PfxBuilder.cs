@@ -22,7 +22,7 @@ namespace Certify.ACME.Anvil.Pkcs
 
         private readonly X509Certificate certificate;
         private readonly IKey privateKey;
-        private readonly CertificateStore certificateStore = new CertificateStore();
+        private readonly CertificateCollection issuerCertCache = new CertificateCollection();
 
         /// <summary>
         /// Gets or sets a value indicating whether to include the full certificate chain in the PFX.
@@ -58,13 +58,13 @@ namespace Certify.ACME.Anvil.Pkcs
         /// Adds an issuer certificate.
         /// </summary>
         /// <param name="certificate">The issuer certificate.</param>
-        public void AddIssuer(byte[] certificate) => certificateStore.Add(certificate);
+        public void AddIssuer(byte[] certificate) => issuerCertCache.Add(certificate);
 
         /// <summary>
-        /// Adds issuer certificates.
+        /// Adds issuer certificateCollection.
         /// </summary>
-        /// <param name="certificates">The issuer certificates.</param>
-        public void AddIssuers(byte[] certificates) => certificateStore.Add(certificates);
+        /// <param name="certificates">The issuer certificateCollection.</param>
+        public void AddIssuers(byte[] certificates) => issuerCertCache.Add(certificates);
 
         /// <summary>
         /// Builds the PFX with specified friendly name.
@@ -100,8 +100,10 @@ namespace Certify.ACME.Anvil.Pkcs
 
             if (FullChain && !certificate.IssuerDN.Equivalent(certificate.SubjectDN))
             {
-                var certChain = BuildCertChain();
+                var certChain = BuildCertChain(allowBuildWithoutKnownRoot);
+
                 var certChainEntries = certChain.Select(c => new X509CertificateEntry(c)).ToList();
+
                 certChainEntries.Add(entry);
 
                 store.SetKeyEntry(friendlyName, new AsymmetricKeyEntry(keyPair.Private), certChainEntries.ToArray());
@@ -118,22 +120,43 @@ namespace Certify.ACME.Anvil.Pkcs
             }
         }
 
+        /// <summary>
+        /// Uses the BC PkixCertPathBuilder to build a valid certificate path from end entity to root or deepest known intermediate
+        /// </summary>
+        /// <param name="allowBuildWithoutKnownRoot"></param>
+        /// <returns></returns>
         private IList<X509Certificate> BuildCertChain(bool allowBuildWithoutKnownRoot = false)
         {
             var certParser = new X509CertificateParser();
-            var certificates = certificateStore
+
+            var issuerCerts = issuerCertCache
                 .GetIssuers(certificate.GetEncoded())
-                .Select(der => certParser.ReadCertificate(der))
+                .Select(der => certParser.ReadCertificate(der));
+
+            var certificates = issuerCerts
                 .Select(cert => new
                 {
                     IsRoot = cert.IssuerDN.Equivalent(cert.SubjectDN),
                     Cert = cert
                 });
 
-            var rootCerts = new HashSet(certificates.Where(c => c.IsRoot).Select(c => new TrustAnchor(c.Cert, null)));
-            var intermediateCerts = certificates.Where(c => !c.IsRoot).Select(c => c.Cert).ToList();
+            // ideally we build the trust chain from the real root, and roots are ones where the issuer distinguished named is also the subject distinguished named 
+            var rootCerts = new HashSet(
+                certificates.Where(c => c.IsRoot)
+                .Select(c => new TrustAnchor(c.Cert, null))
+            );
 
-            intermediateCerts.Add(certificate);
+            // other issuers in the chain are intermediates
+
+            var endEntityAndIntermediateCerts = certificates
+                .Where(c => !c.IsRoot)
+                .Select(c => c.Cert)
+                .ToList();
+
+            // the PkixCertPathBuilder also requires the end entity cert in the trusts anchor set
+            endEntityAndIntermediateCerts.Add(certificate);
+
+           // endEntityAndIntermediateCerts.Sort((a, b) => a.IssuerDN.Equivalent(b.SubjectDN) ? 0 : 1);
 
             var target = new X509CertStoreSelector
             {
@@ -142,38 +165,61 @@ namespace Certify.ACME.Anvil.Pkcs
 
             PkixBuilderParameters builderParams;
 
-            // by default, use a known root to build our chain
-            builderParams = new PkixBuilderParameters(rootCerts, target)
-            {
-                IsRevocationEnabled = false
-            };
+            // If we know the root issuer cert we can use that as the deepest part of our chain, otherwise we can only build our path up to our last known intermediate
+            // If we don't know the root and have no intermediates then path building will fail
+
+            var buildUsedIntermediateTrustAnchor = false;
+            X509Certificate intermediateTrustAnchor = null;
 
             if (allowBuildWithoutKnownRoot && rootCerts.Count == 0)
             {
                 // no matching roots known, use the best intermediate (non-root intermediate in our list which is not issued by another item in the list)
 
                 // find intermediates closest to root, where subject is not an issuer we have in our list of intermediates
-                var intermediateClosestToRoot = intermediateCerts
-                    .Where(c => !intermediateCerts.Any(i => i.SubjectDN.ToString() == c.IssuerDN.ToString()))
+                intermediateTrustAnchor = endEntityAndIntermediateCerts
+                    .Where(c => !endEntityAndIntermediateCerts.Any(i => i.SubjectDN.ToString() == c.IssuerDN.ToString()))
                     .FirstOrDefault();
 
-                var intermediateHashSet = new HashSet(new List<TrustAnchor> { new TrustAnchor(intermediateClosestToRoot, null) });
+                var intermediateHashSet = new HashSet(new List<TrustAnchor> { new TrustAnchor(intermediateTrustAnchor, null) });
 
                 builderParams = new PkixBuilderParameters(intermediateHashSet, target)
                 {
                     IsRevocationEnabled = false
                 };
+
+                buildUsedIntermediateTrustAnchor = true;
+            }
+            else
+            {
+                // use a known root to build our chain
+                builderParams = new PkixBuilderParameters(rootCerts, target)
+                {
+                    IsRevocationEnabled = false
+                };
+
+                buildUsedIntermediateTrustAnchor = false;
             }
 
             builderParams.AddStore(
                 X509StoreFactory.Create(
                     "Certificate/Collection",
-                    new X509CollectionStoreParameters(intermediateCerts)));
+                    new X509CollectionStoreParameters(endEntityAndIntermediateCerts)
+                    )
+                );
 
             var builder = new PkixCertPathBuilder();
+
+            // build and validate the certificate path
             var result = builder.Build(builderParams);
 
-            var fullChain = result.CertPath.Certificates.Cast<X509Certificate>().ToArray();
+            var fullChain = result.CertPath.Certificates.Cast<X509Certificate>().ToList();
+
+            if (buildUsedIntermediateTrustAnchor && intermediateTrustAnchor != null)
+            {
+                // include intermediate we used as trust anchor
+                fullChain.Add(intermediateTrustAnchor);
+            }
+           
             return fullChain;
         }
 

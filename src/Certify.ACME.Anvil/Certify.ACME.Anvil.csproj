@@ -6,7 +6,7 @@
     <AssemblyVersion>3.0.0</AssemblyVersion>
     <Version>3.0.0</Version>
     <FileVersion>3.0.0</FileVersion>
-    <Authors>Webprofusion,  https://github.com/fszlin/certes Contributors</Authors>
+    <Authors>Webprofusion, https://github.com/fszlin/certes Contributors</Authors>
     <Product>Certify.ACME.Anvil Client</Product>
     <Title>$(Product)</Title>
     <Description>A client implementation for the Automated Certificate Management Environment (ACME) protocol. This package is a fork of the excellent https://github.com/fszlin/certes project with updated packaging, feature updates and experimental extensions. Used by https://certifytheweb.com</Description>
@@ -27,18 +27,6 @@
 
   <ItemGroup>
     <None Include="..\..\misc\logo.png" Pack="true" PackagePath="\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Resources\Certificates\dst-root-ca-x3.pem" />
-    <None Remove="Resources\Certificates\fake-le-root-x1.pem" />
-    <None Remove="Resources\Certificates\isrg-root-x1.pem" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Certificates\dst-root-ca-x3.pem" />
-    <EmbeddedResource Include="Resources\Certificates\fake-le-root-x1.pem" />
-    <EmbeddedResource Include="Resources\Certificates\isrg-root-x1.pem" />
   </ItemGroup>
 
   <ItemGroup>

@@ -36,17 +36,16 @@ namespace Certify.ACME.Anvil
         /// </summary>
         /// <param name="certificateChain">The certificate chain.</param>
         /// <param name="certKey">The certificate key.</param>
-        /// <param name="requireAllIssuers">If true, all issuers are required in the chain, including unknown roots</param>
         /// <returns>The encoded certificate chain.</returns>
-        public static string ToPem(this CertificateChain certificateChain, IKey certKey = null, bool requireAllIssuers = false)
+        public static string ToPem(this CertificateChain certificateChain, IKey certKey = null)
         {
-            var certStore = new CertificateStore();
+            var issuerCertCache = new CertificateCollection();
             foreach (var issuer in certificateChain.Issuers)
             {
-                certStore.Add(issuer.ToDer());
+                issuerCertCache.Add(issuer.ToDer());
             }
 
-            var issuers = certStore.GetIssuers(certificateChain.Certificate.ToDer(), requireAllIssuers);
+            var issuers = issuerCertCache.GetIssuers(certificateChain.Certificate.ToDer());
 
             using (var writer = new StringWriter())
             {
