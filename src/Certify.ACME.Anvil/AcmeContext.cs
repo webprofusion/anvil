@@ -332,14 +332,13 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
-        /// Update ARI renewal info
+        /// Update ARI renewal info, if provider doesn't support ARI or update fails the exception is catch and no further action is takem
         /// </summary>
         /// <param name="certificateId"></param>
         /// <param name="replaced"></param>
         /// <returns></returns>
         public async Task UpdateRenewalInfo(string certificateId, bool replaced)
         {
-
             var endpoint = await this.GetResourceUri(d => d.RenewalInfo);
 
             var body = new

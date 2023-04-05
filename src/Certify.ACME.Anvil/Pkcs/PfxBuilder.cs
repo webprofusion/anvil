@@ -156,8 +156,6 @@ namespace Certify.ACME.Anvil.Pkcs
             // the PkixCertPathBuilder also requires the end entity cert in the trusts anchor set
             endEntityAndIntermediateCerts.Add(certificate);
 
-           // endEntityAndIntermediateCerts.Sort((a, b) => a.IssuerDN.Equivalent(b.SubjectDN) ? 0 : 1);
-
             var target = new X509CertStoreSelector
             {
                 Certificate = certificate
@@ -219,7 +217,7 @@ namespace Certify.ACME.Anvil.Pkcs
                 // include intermediate we used as trust anchor
                 fullChain.Add(intermediateTrustAnchor);
             }
-           
+
             return fullChain;
         }
 

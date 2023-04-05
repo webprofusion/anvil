@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Certify.ACME.Anvil.Properties;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.X509;
 
