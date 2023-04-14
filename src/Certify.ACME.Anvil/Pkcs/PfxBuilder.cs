@@ -104,8 +104,6 @@ namespace Certify.ACME.Anvil.Pkcs
 
                 var certChainEntries = certChain.Select(c => new X509CertificateEntry(c)).ToList();
 
-                certChainEntries.Add(entry);
-
                 store.SetKeyEntry(friendlyName, new AsymmetricKeyEntry(keyPair.Private), certChainEntries.ToArray());
             }
             else
@@ -125,7 +123,7 @@ namespace Certify.ACME.Anvil.Pkcs
         /// </summary>
         /// <param name="allowBuildWithoutKnownRoot"></param>
         /// <returns></returns>
-        private IList<X509Certificate> BuildCertChain(bool allowBuildWithoutKnownRoot = false)
+        private IList<Org.BouncyCastle.X509.X509Certificate> BuildCertChain(bool allowBuildWithoutKnownRoot = false)
         {
             var certParser = new X509CertificateParser();
 
@@ -141,7 +139,7 @@ namespace Certify.ACME.Anvil.Pkcs
                 });
 
             // ideally we build the trust chain from the real root, and roots are ones where the issuer distinguished named is also the subject distinguished named 
-            var rootCerts = new HashSet(
+            var rootCerts = new HashSet<TrustAnchor>(
                 certificates.Where(c => c.IsRoot)
                 .Select(c => new TrustAnchor(c.Cert, null))
             );
@@ -178,7 +176,7 @@ namespace Certify.ACME.Anvil.Pkcs
                     .Where(c => !endEntityAndIntermediateCerts.Any(i => i.SubjectDN.ToString() == c.IssuerDN.ToString()))
                     .FirstOrDefault();
 
-                var intermediateHashSet = new HashSet(new List<TrustAnchor> { new TrustAnchor(intermediateTrustAnchor, null) });
+                var intermediateHashSet = new HashSet<TrustAnchor>(new List<TrustAnchor> { new TrustAnchor(intermediateTrustAnchor, null) });
 
                 builderParams = new PkixBuilderParameters(intermediateHashSet, target)
                 {
@@ -198,19 +196,15 @@ namespace Certify.ACME.Anvil.Pkcs
                 buildUsedIntermediateTrustAnchor = false;
             }
 
-            builderParams.AddStore(
-                X509StoreFactory.Create(
-                    "Certificate/Collection",
-                    new X509CollectionStoreParameters(endEntityAndIntermediateCerts)
-                    )
-                );
+            var store = CollectionUtilities.CreateStore<X509Certificate>(endEntityAndIntermediateCerts);
+            builderParams.AddStoreCert(store);
 
             var builder = new PkixCertPathBuilder();
 
             // build and validate the certificate path
             var result = builder.Build(builderParams);
 
-            var fullChain = result.CertPath.Certificates.Cast<X509Certificate>().ToList();
+            var fullChain = result.CertPath.Certificates.Cast<Org.BouncyCastle.X509.X509Certificate>().ToList();
 
             if (buildUsedIntermediateTrustAnchor && intermediateTrustAnchor != null)
             {

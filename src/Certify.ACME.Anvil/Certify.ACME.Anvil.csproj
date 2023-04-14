@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../misc/Certify.ACME.Anvil.props" />
 
   <PropertyGroup>
@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.*" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.*" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
 
