@@ -110,7 +110,7 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
-        /// Changes the account key.
+        /// Changes the account key (Account Key Rollover)
         /// </summary>
         /// <param name="key">The new account key.</param>
         /// <returns>The account resource.</returns>
