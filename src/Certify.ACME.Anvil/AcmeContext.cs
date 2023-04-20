@@ -80,16 +80,24 @@ namespace Certify.ACME.Anvil
         /// <summary>
         /// Gets the ACME account context.
         /// </summary>
+        /// <param name="accountUri">Optional account URI to initialise the context, otherwise an ACME account query is performed.</param>
         /// <returns>The ACME account context.</returns>
-        public async Task<IAccountContext> Account()
+        public async Task<IAccountContext> Account(Uri accountUri = null)
         {
             if (accountContext != null)
             {
                 return accountContext;
             }
 
-            var resp = await AccountContext.NewAccount(this, new Account.Payload { OnlyReturnExisting = true }, true);
-            return accountContext = new AccountContext(this, resp.Location);
+            if (accountUri != null)
+            {
+                return accountContext = new AccountContext(this, accountUri);
+            }
+            else
+            {
+                var resp = await AccountContext.NewAccount(this, new Account.Payload { OnlyReturnExisting = true }, true);
+                return accountContext = new AccountContext(this, resp.Location);
+            }
         }
 
         /// <summary>
@@ -104,8 +112,15 @@ namespace Certify.ACME.Anvil
             }
             else
             {
-                accountUri = await Account().Location();
-                return accountUri;
+                if (accountContext?.Location != null)
+                {
+                    return accountContext.Location;
+                }
+                else
+                {
+                    accountUri = await Account().Location();
+                    return accountUri;
+                }
             }
         }
 

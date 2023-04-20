@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
@@ -48,8 +48,9 @@ namespace Certify.ACME.Anvil
         /// <summary>
         /// Gets the ACME account context.
         /// </summary>
+        /// <param name="accountUri">Optional URI to initialize account, otherwise an ACME account query is performed</param>
         /// <returns>The ACME account context.</returns>
-        Task<IAccountContext> Account();
+        Task<IAccountContext> Account(Uri accountUri = null);
 
         /// <summary>
         /// Get cached Account URI or fetch via ACME

@@ -59,7 +59,7 @@ namespace Certify.ACME.Anvil.Acme
         /// </returns>
         public async Task<Account> Update(IList<string> contact = null, bool agreeTermsOfService = false)
         {
-            var location = await Context.Account().Location();
+            var location = await Context.Account(Location).Location();
             var account = new Account
             {
                 Contact = contact
