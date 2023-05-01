@@ -24,7 +24,7 @@ namespace Certify.ACME.Anvil
             var uri = getter(dir);
             if (!optional && uri == null)
             {
-                throw new NotSupportedException("ACME operation not supported.");
+                throw new NotSupportedException($"Requested ACME operation not supported by the CA.");
             }
 
             return uri;

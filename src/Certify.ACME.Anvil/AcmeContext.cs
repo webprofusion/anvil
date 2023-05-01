@@ -336,13 +336,19 @@ namespace Certify.ACME.Anvil
         /// <returns></returns>
         public async Task<AcmeRenewalInfo> GetRenewalInfo(string certificateId)
         {
-            var uri = await this.GetResourceUri(d => d.RenewalInfo);
+            var uri = await this.GetResourceUri(d => d.RenewalInfo, optional: true);
+            if (uri != null)
+            {
+                var resourceUri = new Uri($"{uri.ToString().TrimEnd('/')}/{certificateId}");
 
-            var resourceUri = new Uri($"{uri.ToString().TrimEnd('/')}/{certificateId}");
+                var resp = await HttpClient.Get<AcmeRenewalInfo>(resourceUri);
 
-            var resp = await HttpClient.Get<AcmeRenewalInfo>(resourceUri);
-
-            return resp.Resource;
+                return resp.Resource;
+            }
+            else
+            {
+                return null;
+            }
 
         }
 
@@ -354,15 +360,18 @@ namespace Certify.ACME.Anvil
         /// <returns></returns>
         public async Task UpdateRenewalInfo(string certificateId, bool replaced)
         {
-            var endpoint = await this.GetResourceUri(d => d.RenewalInfo);
+            var endpoint = await this.GetResourceUri(d => d.RenewalInfo, optional: true);
 
-            var body = new
+            if (endpoint != null)
             {
-                certID = certificateId,
-                replaced = replaced
-            };
+                var body = new
+                {
+                    certID = certificateId,
+                    replaced = replaced
+                };
 
-            await HttpClient.Post<string>(this, endpoint, body, true);
+                await HttpClient.Post<string>(this, endpoint, body, true);
+            }
         }
 
 
