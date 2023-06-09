@@ -1,10 +1,16 @@
-## Certify.ACME.Anvil
+## Anvil
 
 **The project is a fork of https://github.com/fszlin/certes with packaging updates, feature updates and experimental extensions.** 
 
 This library is an ACME client implementation primarily used by https://certifytheweb.com and is subject to changes required by that application.
 
+Extended Features:
+- ACME ARI (renewal info)
+- Certificate chain build does not require installed/embedded root cert
+- Optional use of modern PFX cert/key algorithms for OpenSSL 3.x+ compatibility
+- Authority token challenges, tkauth-01 and TnAuthList
 ## Account
+
 
 Creating new ACME account:
 ```C#
