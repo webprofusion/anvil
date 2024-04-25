@@ -192,7 +192,7 @@ namespace Certify.ACME.Anvil.Acme
 
             if (response.IsSuccessStatusCode)
             {
-                if (IsJsonMedia(response.Content?.Headers.ContentType?.MediaType))
+                if (IsJsonMedia(response))
                 {
                     var json = await response.Content.ReadAsStringAsync();
                     resource = JsonConvert.DeserializeObject<T>(json);
@@ -205,7 +205,7 @@ namespace Certify.ACME.Anvil.Acme
             }
             else
             {
-                if (IsJsonMedia(response.Content?.Headers.ContentType.MediaType))
+                if (IsJsonMedia(response))
                 {
                     var json = await response.Content.ReadAsStringAsync();
                     error = JsonConvert.DeserializeObject<AcmeError>(json);
@@ -232,8 +232,18 @@ namespace Certify.ACME.Anvil.Acme
             nonce = values.FirstOrDefault();
         }
 
-        private static bool IsJsonMedia(string mediaType)
+        private static bool IsJsonMedia(HttpResponseMessage response)
         {
+            var mediaType = response?.Content?.Headers?.ContentType?.MediaType;
+
+            if (mediaType == null && response?.Content?.Headers != null)
+            {
+                if (response.Content.Headers.TryGetValues("Content-Type", out var mediaTypes))
+                {
+                    mediaType = mediaTypes.FirstOrDefault();
+                }
+            }
+
             if (mediaType != null && mediaType.StartsWith("application/"))
             {
                 return mediaType
