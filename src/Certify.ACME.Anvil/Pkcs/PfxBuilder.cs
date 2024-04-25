@@ -25,14 +25,6 @@ namespace Certify.ACME.Anvil.Pkcs
         private readonly CertificateCollection issuerCertCache = new CertificateCollection();
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include the full certificate chain in the PFX.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if include the full certificate chain in the PFX; otherwise, <c>false</c>.
-        /// </value>
-        public bool FullChain { get; set; } = true;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="PfxBuilder"/> class.
         /// </summary>
         /// <param name="certificate">The certificate.</param>
@@ -72,9 +64,8 @@ namespace Certify.ACME.Anvil.Pkcs
         /// <param name="friendlyName">The friendly name.</param>
         /// <param name="password">The password.</param>
         /// <param name="useLegacyKeyAlgorithms">If true, use default Pkcs12StoreBuilder cert and key algorithms, if false, use AES256 with SHA256 and HMAC-SHA256</param>
-        /// <param name="allowBuildWithoutKnownRoot">If true, cert chain </param>
         /// <returns>The PFX data.</returns>
-        public byte[] Build(string friendlyName, string password, bool useLegacyKeyAlgorithms = true, bool allowBuildWithoutKnownRoot = false)
+        public byte[] Build(string friendlyName, string password, bool useLegacyKeyAlgorithms = true)
         {
             var keyPair = LoadKeyPair();
 
@@ -96,20 +87,14 @@ namespace Certify.ACME.Anvil.Pkcs
             var store = builder.Build();
 
             var entry = new X509CertificateEntry(certificate);
+
             store.SetCertificateEntry(friendlyName, entry);
 
-            if (FullChain && !certificate.IssuerDN.Equivalent(certificate.SubjectDN))
-            {
-                var certChain = BuildCertChain(allowBuildWithoutKnownRoot);
+            var certChain = BuildCertChain();
 
-                var certChainEntries = certChain.Select(c => new X509CertificateEntry(c)).ToList();
+            var certChainEntries = certChain.Select(c => new X509CertificateEntry(c)).ToList();
 
-                store.SetKeyEntry(friendlyName, new AsymmetricKeyEntry(keyPair.Private), certChainEntries.ToArray());
-            }
-            else
-            {
-                store.SetKeyEntry(friendlyName, new AsymmetricKeyEntry(keyPair.Private), new[] { entry });
-            }
+            store.SetKeyEntry(friendlyName, new AsymmetricKeyEntry(keyPair.Private), certChainEntries.ToArray());
 
             using (var buffer = new MemoryStream())
             {
@@ -121,9 +106,8 @@ namespace Certify.ACME.Anvil.Pkcs
         /// <summary>
         /// Uses the BC PkixCertPathBuilder to build a valid certificate path from end entity to root or deepest known intermediate
         /// </summary>
-        /// <param name="allowBuildWithoutKnownRoot"></param>
-        /// <returns></returns>
-        private IList<Org.BouncyCastle.X509.X509Certificate> BuildCertChain(bool allowBuildWithoutKnownRoot = false)
+        /// <returns>List of certs in the final chain</returns>
+        private IList<Org.BouncyCastle.X509.X509Certificate> BuildCertChain()
         {
             var certParser = new X509CertificateParser();
 
@@ -167,9 +151,15 @@ namespace Certify.ACME.Anvil.Pkcs
             var buildUsedIntermediateTrustAnchor = false;
             X509Certificate intermediateTrustAnchor = null;
 
-            if (allowBuildWithoutKnownRoot && rootCerts.Count == 0)
+            if (rootCerts.Count == 0)
             {
                 // no matching roots known, use the best intermediate (non-root intermediate in our list which is not issued by another item in the list)
+
+                if (endEntityAndIntermediateCerts.Count == 1)
+                {
+                    // CA is using no intermediates and cert has no known roots, known chain consists of only the end entity
+                    return endEntityAndIntermediateCerts;
+                };
 
                 // find intermediates closest to root, where subject is not an issuer we have in our list of intermediates
                 intermediateTrustAnchor = endEntityAndIntermediateCerts

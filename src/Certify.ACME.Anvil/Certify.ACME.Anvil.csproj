@@ -3,9 +3,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net7.0;</TargetFrameworks>
-    <AssemblyVersion>3.0.0</AssemblyVersion>
-    <Version>3.0.0</Version>
-    <FileVersion>3.0.0</FileVersion>
+    <AssemblyVersion>3.1.0</AssemblyVersion>
+    <Version>3.1.0</Version>
+    <FileVersion>3.1.0</FileVersion>
     <Authors>Webprofusion, https://github.com/fszlin/certes Contributors</Authors>
     <Product>Certify.ACME.Anvil</Product>
     <Title>$(Product)</Title>
