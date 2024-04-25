@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Certify.ACME.Anvil.Crypto;
@@ -64,8 +65,9 @@ namespace Certify.ACME.Anvil.Pkcs
         /// <param name="friendlyName">The friendly name.</param>
         /// <param name="password">The password.</param>
         /// <param name="useLegacyKeyAlgorithms">If true, use default Pkcs12StoreBuilder cert and key algorithms, if false, use AES256 with SHA256 and HMAC-SHA256</param>
+        /// <param name="skipChainBuild">If true, full chain build will not be attempted</param>
         /// <returns>The PFX data.</returns>
-        public byte[] Build(string friendlyName, string password, bool useLegacyKeyAlgorithms = true)
+        public byte[] Build(string friendlyName, string password, bool useLegacyKeyAlgorithms = true, bool skipChainBuild = false)
         {
             var keyPair = LoadKeyPair();
 
@@ -90,7 +92,12 @@ namespace Certify.ACME.Anvil.Pkcs
 
             store.SetCertificateEntry(friendlyName, entry);
 
-            var certChain = BuildCertChain();
+            IList<X509Certificate> certChain = new List<X509Certificate>() { entry.Certificate };
+
+            if (!skipChainBuild)
+            {
+                certChain = BuildCertChain();
+            }
 
             var certChainEntries = certChain.Select(c => new X509CertificateEntry(c)).ToList();
 
