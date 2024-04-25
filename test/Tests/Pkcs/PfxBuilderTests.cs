@@ -35,7 +35,7 @@ namespace Certify.ACME.Anvil.Pkcs
 
             var pfxBuilder = new PfxBuilder(
                 Encoding.UTF8.GetBytes(leafCert), KeyFactory.NewKey(alog));
-            pfxBuilder.FullChain = false;
+
             var pfx = pfxBuilder.Build("my-cert", "abcd1234");
         }
     }

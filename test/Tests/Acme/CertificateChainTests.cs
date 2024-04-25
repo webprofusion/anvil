@@ -50,7 +50,7 @@ namespace Certify.ACME.Anvil.Acme
                 File.ReadAllText("./Data/test-root.pem").Trim());
 
             var chain = new CertificateChain(pem);
-            Assert.Throws<AcmeException>(() => chain.ToPem(requireAllIssuers: true));
+            Assert.Throws<AcmeException>(() => chain.ToPem());
         }
 
         [Fact]
