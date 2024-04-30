@@ -57,6 +57,12 @@ namespace Certify.ACME.Anvil.Acme.Resource
         public DateTimeOffset? NotAfter { get; set; }
 
         /// <summary>
+        /// The ARI Certificate ID of the certificate being replaced by the order. Should not be serialized if null. ARI is an optional extension to ACME.
+        /// </summary>
+        [JsonProperty("replaces", NullValueHandling = NullValueHandling.Ignore)]
+        public string Replaces { get; set; }
+
+        /// <summary>
         /// Gets or sets the error.
         /// </summary>
         /// <value>

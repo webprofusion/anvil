@@ -247,10 +247,11 @@ namespace Certify.ACME.Anvil
         /// <param name="identifiers">The (dns) identifiers.</param>
         /// <param name="notBefore">Th value of not before field for the certificate.</param>
         /// <param name="notAfter">The value of not after field for the certificate.</param>
+        /// <param name="ariReplacesCertId">ARI Cert Id of cert being replaced (optional)</param>
         /// <returns>
         /// The order context created.
         /// </returns>
-        public async Task<IOrderContext> NewOrder(IList<string> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null)
+        public async Task<IOrderContext> NewOrder(IList<string> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null)
         {
             var endpoint = await this.GetResourceUri(d => d.NewOrder);
 
@@ -265,6 +266,7 @@ namespace Certify.ACME.Anvil
                     .ToArray(),
                 NotBefore = notBefore,
                 NotAfter = notAfter,
+                Replaces = ariReplacesCertId
             };
 
             var order = await HttpClient.Post<Order>(this, endpoint, body, true);
@@ -277,10 +279,11 @@ namespace Certify.ACME.Anvil
         /// <param name="identifiers">The identifiers.</param>
         /// <param name="notBefore">Th value of not before field for the certificate.</param>
         /// <param name="notAfter">The value of not after field for the certificate.</param>
+        /// <param name="ariReplacesCertId">ARI Cert Id of cert being replaced (optional)</param>
         /// <returns>
         /// The order context created.
         /// </returns>
-        public async Task<IOrderContext> NewOrder(IList<Identifier> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null)
+        public async Task<IOrderContext> NewOrder(IList<Identifier> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null)
         {
             var endpoint = await this.GetResourceUri(d => d.NewOrder);
 
@@ -289,6 +292,7 @@ namespace Certify.ACME.Anvil
                 Identifiers = identifiers.ToArray(),
                 NotBefore = notBefore,
                 NotAfter = notAfter,
+                Replaces = ariReplacesCertId
             };
 
             var order = await HttpClient.Post<Order>(this, endpoint, body, true);
@@ -373,7 +377,6 @@ namespace Certify.ACME.Anvil
                 await HttpClient.Post<string>(this, endpoint, body, true);
             }
         }
-
 
         /// <summary>
         /// Set cached accountURI
