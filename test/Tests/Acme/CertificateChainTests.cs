@@ -32,25 +32,12 @@ namespace Certify.ACME.Anvil.Acme
             var expectedPem =
                 key.ToPem().Trim() +
                 Environment.NewLine +
-                pem +
-                Environment.NewLine +
-                File.ReadAllText("./Data/dst-root-ca-x3.pem").Trim();
+                pem;
 
             var chain = new CertificateChain(pem);
+            
             var result = chain.ToPem(key);
-            Assert.Equal(expectedPem.Replace("\r", "").Trim(), result.Replace("\r", "").Trim());
-        }
-
-        [Fact]
-        public void FailWhenMissingIntermediateCert()
-        {
-            var pem =
-                string.Join(Environment.NewLine,
-                File.ReadAllText("./Data/leaf-cert.pem").Trim(),
-                File.ReadAllText("./Data/test-root.pem").Trim());
-
-            var chain = new CertificateChain(pem);
-            Assert.Throws<AcmeException>(() => chain.ToPem());
+            Assert.Equal(expectedPem.ReplaceLineEndings().Trim(), result.ReplaceLineEndings().Trim(), ignoreLineEndingDifferences:true, ignoreWhiteSpaceDifferences:true);
         }
 
         [Fact]

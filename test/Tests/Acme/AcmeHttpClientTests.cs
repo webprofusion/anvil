@@ -142,18 +142,18 @@ namespace Certify.ACME.Anvil.Acme
         [Fact]
         public void SetsUserAgent()
         {
-            bool IsCertes(ProductInfoHeaderValue header)
+            bool IsAnvil(ProductInfoHeaderValue header)
             {
-                return header.Product.Name == "Certes"
+                return header.Product.Name == "Certify.ACME.Anvil"
                     && header.Product.Version == typeof(AcmeHttpClient).GetTypeInfo().Assembly.GetName().Version.ToString();
             }
 
-            Assert.Contains(AcmeHttpClient.CreateHttpClient().DefaultRequestHeaders.UserAgent, IsCertes);
+            Assert.Contains(AcmeHttpClient.CreateHttpClient().DefaultRequestHeaders.UserAgent, IsAnvil);
 
             var httpClient = new HttpClient();
             var acmeClient = new AcmeHttpClient(new Uri("https://acme.d/directory"), httpClient);
 
-            Assert.Contains(httpClient.DefaultRequestHeaders.UserAgent, IsCertes);
+            Assert.Contains(httpClient.DefaultRequestHeaders.UserAgent, IsAnvil);
         }
     }
 }
