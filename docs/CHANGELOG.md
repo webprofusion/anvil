@@ -1,7 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.0.0]
+## [3.2.0] - 2024-05-06
+- Implement ARI `replaces` Certificate ID support in order payload
+
+## [3.1.0] - 2024-04-25
+- Allow chain build where the only issuers is the root (no intermediates)
+- Optionally skip chain build verification using known issuers
+- Update content type detection to allow for malformed server responses
+
+## [3.0.0] - 2023-05-01
 - Renamed fork as Certify.ACME.Anvil to avoid confusion with the original Certes library
 - Implement support for tkauth-01, TnAuthList challenges and TnAuthList CSRs
 
