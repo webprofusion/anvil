@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,6 +27,17 @@ namespace Certify.ACME.Anvil
         /// The number of retries.
         /// </value>
         public int BadNonceRetryCount { get; }
+
+
+        /// <summary>
+        /// If true (default), allow GET operations to automatically retry
+        /// </summary>
+        public bool EnableAutoRetryOnGet { get; set; } = true;
+
+        /// <summary>
+        /// Number of retry attempts for operations which allow retry
+        /// </summary>
+        public int AutoRetryAttempts { get; set; } = 3;
 
         /// <summary>
         /// Gets the ACME HTTP client.
@@ -169,7 +180,7 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
-        /// Gets the ACME directory.
+        /// Gets the ACME directory. If enabled, this operation attempts auto retries.
         /// </summary>
         /// <returns>
         /// The ACME directory.
@@ -178,30 +189,45 @@ namespace Certify.ACME.Anvil
         {
             if (directory == null)
             {
-                try
-                {
-                    var resp = await HttpClient.Get<Directory>(DirectoryUri);
+                var attempts = AutoRetryAttempts;
 
-                    if (resp.Error != null && throwOnError)
-                    {
-                        throw new AcmeException(resp.Error.Detail);
-                    }
-
-                    directory = resp.Resource;
-                }
-                catch (Exception exp)
+                while (directory == null && attempts > 0)
                 {
-                    if (throwOnError)
+                    attempts--;
+
+                    try
                     {
-                        // testing the directory URL can also be used to diagnose connectivity to service downtime, 
-                        // so some consumers will want the exception instead of a null directory
-                        if (exp is AcmeException)
+                        var resp = await HttpClient.Get<Directory>(DirectoryUri);
+
+                        if (resp.Error != null && throwOnError && (EnableAutoRetryOnGet == false || (EnableAutoRetryOnGet && attempts == 0)))
                         {
-                            throw;
+                            // throw on error enabled and we have no more attempts
+                            throw new AcmeRequestException(resp.Error.Detail, resp.Error);
+                        }
+                        else if (resp.Error != null && resp.RetryAfter > 0 && attempts > 0)
+                        {
+                            // observe CA preferred retry-after, up to 30s
+                            await Task.Delay(Math.Min(resp.RetryAfter, 30) * 1000);
                         }
                         else
                         {
-                            throw new AcmeException("The ACME service (directory) is unavailable.", exp);
+                            directory = resp.Resource;
+                        }
+                    }
+                    catch (Exception exp)
+                    {
+                        if (throwOnError && (EnableAutoRetryOnGet == false || (EnableAutoRetryOnGet && attempts == 0)))
+                        {
+                            // testing the directory URL can also be used to diagnose connectivity to service downtime, 
+                            // so some consumers will want the exception instead of a null directory
+                            if (exp is AcmeException)
+                            {
+                                throw;
+                            }
+                            else
+                            {
+                                throw new AcmeException("The ACME service (directory) is unavailable.", exp);
+                            }
                         }
                     }
                 }
