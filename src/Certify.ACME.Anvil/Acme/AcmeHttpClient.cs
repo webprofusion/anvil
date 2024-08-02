@@ -210,6 +210,33 @@ namespace Certify.ACME.Anvil.Acme
                     var json = await response.Content.ReadAsStringAsync();
                     error = JsonConvert.DeserializeObject<AcmeError>(json);
                 }
+                else
+                {
+                    if ((int)response.StatusCode == 429)
+                    {
+                        // error is not JSON format, likely a higher level rate limiter delivering an html response
+                        error = new AcmeError();
+                        error.Status = response.StatusCode;
+                        error.Detail = "Too Many Requests  - request rate limited by Certificate Authority service [auto generated error from status code])";
+                        error.Type = "urn:ietf:params:acme:error:rateLimited";
+                    }
+                    else if ((int)response.StatusCode == 500)
+                    {
+                        // error is not JSON format, normalize using a generated error instead
+                        error = new AcmeError();
+                        error.Status = response.StatusCode;
+                        error.Detail = "The Certificate Authority service encountered an internal error [auto generated error from status code])";
+                        error.Type = "urn:ietf:params:acme:error:serverInternal";
+                    }
+                    else if ((int)response.StatusCode == 503)
+                    {
+                        // error is not JSON format, normalize using a generated error instead
+                        error = new AcmeError();
+                        error.Status = response.StatusCode;
+                        error.Detail = "The Certificate Authority service is unavailable [auto generated error from status code])";
+                        error.Type = "urn:ietf:params:acme:error:serverInternal";
+                    }
+                }
             }
 
             return new AcmeHttpResponse<T>(location, resource, links, error, retryafter);
