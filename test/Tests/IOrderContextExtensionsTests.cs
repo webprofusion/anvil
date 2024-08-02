@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
@@ -20,7 +20,7 @@ namespace Certify.ACME.Anvil
             orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
             {
                 Identifiers = new[] {
-                    new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                 },
                 Status = OrderStatus.Ready,
             });
@@ -28,7 +28,7 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Valid,
                 });
@@ -37,7 +37,7 @@ namespace Certify.ACME.Anvil
             var certInfo = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
-                CommonName = "www.certes.com",
+                CommonName = "www.example.com",
             }, key, null);
 
             Assert.Equal(
@@ -64,7 +64,7 @@ namespace Certify.ACME.Anvil
             orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
             {
                 Identifiers = new[] {
-                    new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                 },
                 Status = OrderStatus.Pending,
             });
@@ -72,7 +72,7 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Valid,
                 });
@@ -81,7 +81,7 @@ namespace Certify.ACME.Anvil
             var certInfo = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
-                CommonName = "www.certes.com",
+                CommonName = "www.example.com",
             }, key, null);
 
             Assert.Equal(
@@ -109,49 +109,49 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Ready,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Ready,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Processing,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Valid,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Ready,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Ready,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Valid,
                 });
@@ -159,7 +159,7 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Processing,
                 });
@@ -168,7 +168,7 @@ namespace Certify.ACME.Anvil
             var certInfo = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
-                CommonName = "www.certes.com",
+                CommonName = "www.example.com",
             }, key, null, 5);
 
             Assert.Equal(
@@ -227,7 +227,7 @@ namespace Certify.ACME.Anvil
                     new Order
                     {
                         Identifiers = new[] {
-                            new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                            new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                         },
                         Status = OrderStatus.Valid,
                     },
@@ -243,7 +243,7 @@ namespace Certify.ACME.Anvil
             orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
             {
                 Identifiers = new[] {
-                    new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                 },
                 Certificate = certDefaultLoc,
                 Finalize = finalizeLoc,
@@ -254,7 +254,7 @@ namespace Certify.ACME.Anvil
             var certInfoDefaultRoot = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
-                CommonName = "www.certes.com",
+                CommonName = "www.example.com",
             }, key, null);
 
             Assert.Equal(
@@ -264,7 +264,7 @@ namespace Certify.ACME.Anvil
             var certInfoAlternateRoot = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
-                CommonName = "www.certes.com",
+                CommonName = "www.example.com",
             }, key, "AlternateRoot");
 
             Assert.Equal(
@@ -274,7 +274,7 @@ namespace Certify.ACME.Anvil
             var certInfoUnknownRoot = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
-                CommonName = "www.certes.com",
+                CommonName = "www.example.com",
             }, key, "UnknownRoot");
 
             Assert.Equal(
@@ -291,7 +291,7 @@ namespace Certify.ACME.Anvil
             orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
             {
                 Identifiers = new[] {
-                    new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                 },
                 Status = OrderStatus.Valid,
             });
@@ -301,7 +301,7 @@ namespace Certify.ACME.Anvil
                 orderCtxMock.Object.Generate(new CsrInfo
                 {
                     CountryName = "C",
-                    CommonName = "www.certes.com",
+                    CommonName = "www.example.com",
                 }, key, null));
         }
 
@@ -315,7 +315,7 @@ namespace Certify.ACME.Anvil
             orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
             {
                 Identifiers = new[] {
-                    new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                 },
                 Status = OrderStatus.Pending,
             });
@@ -323,7 +323,7 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Invalid,
                 });
@@ -333,7 +333,7 @@ namespace Certify.ACME.Anvil
                 orderCtxMock.Object.Generate(new CsrInfo
                 {
                     CountryName = "C",
-                    CommonName = "www.certes.com",
+                    CommonName = "www.example.com",
                 }, key, null));
         }
 
@@ -348,28 +348,28 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Ready,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Ready,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Processing,
                 })
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Processing,
                 });
@@ -378,7 +378,7 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
-                        new Identifier { Value = "www.certes.com", Type = IdentifierType.Dns },
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Processing,
                 });
@@ -388,7 +388,7 @@ namespace Certify.ACME.Anvil
                 orderCtxMock.Object.Generate(new CsrInfo
                 {
                     CountryName = "C",
-                    CommonName = "www.certes.com",
+                    CommonName = "www.example.com",
                 }, key));
         }
 

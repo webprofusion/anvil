@@ -47,7 +47,7 @@ namespace Certify.ACME.Anvil.Pkcs
         {
             var csr = new CertificationRequestBuilder();
             csr.AddName("st", "yonge street");
-            csr.AddName("cn", "www.certes.com");
+            csr.AddName("cn", "www.example.com");
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
                 csr.AddName("invalid-name", "omg"));

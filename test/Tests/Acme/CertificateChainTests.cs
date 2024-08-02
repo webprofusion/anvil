@@ -37,7 +37,7 @@ namespace Certify.ACME.Anvil.Acme
             var chain = new CertificateChain(pem);
             
             var result = chain.ToPem(key);
-            Assert.Equal(expectedPem.ReplaceLineEndings().Trim(), result.ReplaceLineEndings().Trim(), ignoreLineEndingDifferences:true, ignoreWhiteSpaceDifferences:true);
+            Assert.Equal(expectedPem.Trim(), result.Trim(), ignoreLineEndingDifferences:true, ignoreWhiteSpaceDifferences:true);
         }
 
         [Fact]

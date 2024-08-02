@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Certify.ACME.Anvil.Tests;
 using Xunit;
 using Xunit.Abstractions;
 using static Certify.ACME.Anvil.IntegrationHelper;
@@ -22,7 +23,7 @@ namespace Certify.ACME.Anvil
 
                 var ctx = new AcmeContext(dirUri, http: GetAcmeHttpClient(dirUri));
                 var account = await ctx.NewAccount(
-                    new[] { $"mailto:certes-{DateTime.UtcNow.Ticks}@certes.app" }, true);
+                    new[] { $"mailto:certes-{DateTime.UtcNow.Ticks}@{Helper.TestCI_Domain1}" }, true);
                 var location = await ctx.Account().Location();
 
                 var newKey = KeyFactory.NewKey(KeyAlgorithm.ES256);

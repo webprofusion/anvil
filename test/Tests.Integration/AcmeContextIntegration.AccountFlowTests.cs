@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme.Resource;
+using Certify.ACME.Anvil.Tests;
 using Xunit;
 using Xunit.Abstractions;
 using static Certify.ACME.Anvil.IntegrationHelper;
@@ -23,7 +24,7 @@ namespace Certify.ACME.Anvil
 
                 var ctx = new AcmeContext(dirUri, http: GetAcmeHttpClient(dirUri));
                 var accountCtx = await ctx.NewAccount(
-                    new[] { $"mailto:certes-{DateTime.UtcNow.Ticks}@certes.app" }, true);
+                    new[] { $"mailto:certes-{DateTime.UtcNow.Ticks}@{Helper.TestCI_Domain1}" }, true);
                 var account = await accountCtx.Resource();
                 var location = accountCtx.Location;
 
@@ -31,7 +32,7 @@ namespace Certify.ACME.Anvil
                 Assert.Equal(AccountStatus.Valid, account.Status);
 
                 await accountCtx.Update(agreeTermsOfService: true);
-                await accountCtx.Update(contact: new[] { $"mailto:certes-{DateTime.UtcNow.Ticks}@certes.app" });
+                await accountCtx.Update(contact: new[] { $"mailto:certes-{DateTime.UtcNow.Ticks}@{Helper.TestCI_Domain1}" });
 
                 account = await accountCtx.Deactivate();
                 Assert.NotNull(account);

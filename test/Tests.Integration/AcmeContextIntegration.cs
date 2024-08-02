@@ -154,7 +154,7 @@ namespace Certify.ACME.Anvil
                 }
             }
 
-            Assert.True(false, "Authorization failed.");
+            Assert.Fail("Authorization failed.");
             return null;
         }
 

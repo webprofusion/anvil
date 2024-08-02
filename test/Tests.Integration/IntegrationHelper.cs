@@ -109,7 +109,7 @@ namespace Certify.ACME.Anvil
                         try
                         {
                             var ctx = new AcmeContext(uri, Helper.GetKeyV2(algo), GetAcmeHttpClient(uri));
-                            await ctx.NewAccount(new[] { "mailto:ci@certes.app" }, true);
+                            await ctx.NewAccount(new[] { $"mailto:ci@{Helper.TestCI_Domain1}" }, true);
                         }
                         catch
                         {
