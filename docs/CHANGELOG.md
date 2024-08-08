@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.3.1] - 2024-08-08
+- Fix typo in AcmeRenewalInfo which causes deserialization error
+ 
 ## [3.3.0] - 2024-08-08
 - Generate ACME error for applicable non-ACME standard server responses (e.g. server busy, too many requests) to normalize error types
 - Add optional Auto Retry on failed directory fetch
