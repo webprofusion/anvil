@@ -37,7 +37,7 @@ namespace Certify.ACME.Anvil.Acme
     /// <summary>
     /// ACME RenewalWindow
     /// </summary>
-    public abstract class AcmeRenewalWindow
+    public class AcmeRenewalWindow
     {
         /// <summary>
         /// Start of renewal window
