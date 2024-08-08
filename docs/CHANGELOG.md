@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.3.0] - 2024-08-08
+- Generate ACME error for applicable non-ACME standard server responses (e.g. server busy, too many requests) to normalize error types
+- Add optional Auto Retry on failed directory fetch
+
 ## [3.2.0] - 2024-05-06
 - Implement ARI `replaces` Certificate ID support in order payload
 
