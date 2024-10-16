@@ -190,15 +190,6 @@ namespace Certify.ACME.Anvil.Pkcs
 
         private byte[] GeneratePkcs10(bool requireOcspMustStaple)
         {
-
-            var keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyEncipherment);
-
-            if (Key.Algorithm != KeyAlgorithm.RS256)
-            {
-                // Elliptic Curve keys don't support KeyEncipherment 
-                keyUsage = new KeyUsage(KeyUsage.DigitalSignature);
-            }
-
             var extensionsToAdd = new Dictionary<DerObjectIdentifier, X509Extension>();
 
             var x509 = new X509Name(attributes.Select(p => p.Id).ToArray(), attributes.Select(p => p.Value).ToArray());
@@ -243,9 +234,6 @@ namespace Certify.ACME.Anvil.Pkcs
                     .Select(n => new GeneralName(GeneralName.DnsName, n))
                     .ToArray();
 
-
-                extensionsToAdd.Add(X509Extensions.BasicConstraints, new X509Extension(false, new DerOctetString(new BasicConstraints(false))));
-                extensionsToAdd.Add(X509Extensions.KeyUsage, new X509Extension(false, new DerOctetString(keyUsage)));
                 extensionsToAdd.Add(X509Extensions.SubjectAlternativeName, new X509Extension(false, new DerOctetString(new GeneralNames(altNames))));
             }
 
