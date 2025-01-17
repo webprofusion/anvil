@@ -108,6 +108,12 @@ namespace Certify.ACME.Anvil.Acme
             /// </value>
             [JsonProperty("externalAccountRequired")]
             public bool? ExternalAccountRequired { get; set; }
+
+            /// <summary>
+            /// ACME Profiles (WIP, optional) https://datatracker.ietf.org/doc/draft-aaron-acme-profiles/
+            /// </summary>
+            [JsonProperty("profiles")]
+            public Dictionary<string, string> Profiles { get; set; }
         }
     }
 }

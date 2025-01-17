@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -274,10 +274,11 @@ namespace Certify.ACME.Anvil
         /// <param name="notBefore">Th value of not before field for the certificate.</param>
         /// <param name="notAfter">The value of not after field for the certificate.</param>
         /// <param name="ariReplacesCertId">ARI Cert Id of cert being replaced (optional)</param>
+        /// <param name="profile">ACME Profile (draft WIP, optional)</param>
         /// <returns>
         /// The order context created.
         /// </returns>
-        public async Task<IOrderContext> NewOrder(IList<string> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null)
+        public async Task<IOrderContext> NewOrder(IList<string> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null, string profile = null)
         {
             var endpoint = await this.GetResourceUri(d => d.NewOrder);
 
@@ -292,7 +293,8 @@ namespace Certify.ACME.Anvil
                     .ToArray(),
                 NotBefore = notBefore,
                 NotAfter = notAfter,
-                Replaces = ariReplacesCertId
+                Replaces = ariReplacesCertId,
+                Profile = profile
             };
 
             var order = await HttpClient.Post<Order>(this, endpoint, body, true);
@@ -306,10 +308,11 @@ namespace Certify.ACME.Anvil
         /// <param name="notBefore">Th value of not before field for the certificate.</param>
         /// <param name="notAfter">The value of not after field for the certificate.</param>
         /// <param name="ariReplacesCertId">ARI Cert Id of cert being replaced (optional)</param>
+        /// <param name="profile">ACME Profile (draft WIP, optional)</param>
         /// <returns>
         /// The order context created.
         /// </returns>
-        public async Task<IOrderContext> NewOrder(IList<Identifier> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null)
+        public async Task<IOrderContext> NewOrder(IList<Identifier> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null, string profile = null)
         {
             var endpoint = await this.GetResourceUri(d => d.NewOrder);
 
@@ -318,7 +321,8 @@ namespace Certify.ACME.Anvil
                 Identifiers = identifiers.ToArray(),
                 NotBefore = notBefore,
                 NotAfter = notAfter,
-                Replaces = ariReplacesCertId
+                Replaces = ariReplacesCertId,
+                Profile = profile
             };
 
             var order = await HttpClient.Post<Order>(this, endpoint, body, true);

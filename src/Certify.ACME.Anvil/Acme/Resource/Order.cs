@@ -63,6 +63,12 @@ namespace Certify.ACME.Anvil.Acme.Resource
         public string Replaces { get; set; }
 
         /// <summary>
+        /// The ACME (https://datatracker.ietf.org/doc/draft-aaron-acme-profiles/) profile selection. Should not be serialized if null. Profiles are a WIP optional extension to ACME.
+        /// </summary>
+        [JsonProperty("profile", NullValueHandling = NullValueHandling.Ignore)]
+        public string Profile { get; set; }
+
+        /// <summary>
         /// Gets or sets the error.
         /// </summary>
         /// <value>

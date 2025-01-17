@@ -47,6 +47,12 @@ namespace Certify.ACME.Anvil.Acme.Resource
         public bool? ExternalAccountRequired { get; }
 
         /// <summary>
+        /// ACME Profiles (WIP, optional) https://datatracker.ietf.org/doc/draft-aaron-acme-profiles/
+        /// </summary>
+        [JsonProperty("profiles")]
+        public Dictionary<string, string> Profiles { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DirectoryMeta"/> class.
         /// </summary>
         /// <param name="termsOfService">The terms of service.</param>

@@ -110,10 +110,11 @@ namespace Certify.ACME.Anvil
         /// <param name="notBefore">Th value of not before field for the certificate.</param>
         /// <param name="notAfter">The value of not after field for the certificate.</param>
         /// <param name="ariReplacesCertId">ARI Cert Id of cert being replaced (optional)</param>
+        /// <param name="profile">ACME Profile selection for the new cert (optional)</param>
         /// <returns>
         /// The order context created.
         /// </returns>
-        Task<IOrderContext> NewOrder(IList<string> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null);
+        Task<IOrderContext> NewOrder(IList<string> identifiers, DateTimeOffset? notBefore = null, DateTimeOffset? notAfter = null, string ariReplacesCertId = null, string profile = null);
 
         /// <summary>
         /// Signs the data with account key.
