@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Certify.ACME.Anvil.Crypto;
@@ -217,7 +217,7 @@ namespace Certify.ACME.Anvil.Pkcs
                             ),
                       null, null)
                     );
-                };
+                }
 
                 var crlDistPoint = new CrlDistPoint(crls.ToArray());
                 extensionsToAdd.Add(X509Extensions.CrlDistributionPoints, new X509Extension(false, new DerOctetString(crlDistPoint.GetDerEncoded())));

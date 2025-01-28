@@ -165,7 +165,7 @@ namespace Certify.ACME.Anvil.Pkcs
                 {
                     // CA is using no intermediates and cert has no known roots, known chain consists of only the end entity
                     return endEntityAndIntermediateCerts;
-                };
+                }
 
                 // find intermediates closest to root, where subject is not an issuer we have in our list of intermediates
                 intermediateTrustAnchor = endEntityAndIntermediateCerts
