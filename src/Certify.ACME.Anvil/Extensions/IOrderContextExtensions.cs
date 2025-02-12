@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -51,14 +51,21 @@ namespace Certify.ACME.Anvil
             var order = await context.Resource();
             foreach (var identifier in order.Identifiers)
             {
-                builder.SubjectAlternativeNames.Add(identifier.Value);
+                if (identifier.Type == IdentifierType.Dns)
+                {
+                    builder.SubjectAlternativeNames.Add(identifier.Value);
+                }
+                else if (identifier.Type == IdentifierType.Ip)
+                {
+                    builder.IpAddresses.Add(identifier.Value);
+                }
             }
 
             return builder;
         }
 
         /// <summary>
-        /// Finalizes and download the certifcate for the order.
+        /// Finalizes and download the certificate for the order.
         /// </summary>
         /// <param name="context">The order context.</param>
         /// <param name="csr">The CSR.</param>

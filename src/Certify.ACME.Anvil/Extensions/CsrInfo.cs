@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Certify.ACME.Anvil
@@ -72,7 +72,7 @@ namespace Certify.ACME.Anvil
 
         /// <summary>
         /// Gets or sets the common name for the CSR.
-        /// If not set, the first identifier of the ACME order will be chosen as common name.
+        /// If not set, the first dns identifier of the ACME order will be chosen as common name. Common names are considered deprecated by CAs
         /// </summary>
         /// <value>
         /// The common name for the CSR.

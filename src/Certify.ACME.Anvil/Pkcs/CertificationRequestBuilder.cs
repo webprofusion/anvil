@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Certify.ACME.Anvil.Crypto;
@@ -22,6 +22,8 @@ namespace Certify.ACME.Anvil.Pkcs
         private string commonName;
         private readonly List<(DerObjectIdentifier Id, string Value)> attributes = new List<(DerObjectIdentifier, string)>();
         private IList<string> subjectAlternativeNames = new List<string>();
+        private IList<string> ipAddresses = new List<string>();
+        private IList<byte[]> tnAuthList = new List<byte[]>();
 
         private string pkcsObjectId;
         private AsymmetricCipherKeyPair keyPair;
@@ -53,7 +55,21 @@ namespace Certify.ACME.Anvil.Pkcs
             }
         }
 
-        private IList<byte[]> tnAuthList = new List<byte[]>();
+        /// <summary>
+        /// Gets/sets the IpAddress to include on CSR, if any
+        /// </summary>
+        public IList<string> IpAddresses
+        {
+            get
+            {
+                return ipAddresses;
+            }
+            set
+            {
+                this.ipAddresses = value ??
+                    throw new ArgumentNullException(nameof(IpAddresses));
+            }
+        }
 
         /// <summary>
         /// Optional list of Telephone Number Authorization List items to include as extensions. When set CSR will ignore subject names etc.
@@ -224,7 +240,7 @@ namespace Certify.ACME.Anvil.Pkcs
             }
             else
             {
-                if (SubjectAlternativeNames.Count == 0)
+                if (SubjectAlternativeNames.Count == 0 && !this.IpAddresses.Any())
                 {
                     SubjectAlternativeNames.Add(commonName);
                 }
@@ -234,8 +250,16 @@ namespace Certify.ACME.Anvil.Pkcs
                     .Select(n => new GeneralName(GeneralName.DnsName, n))
                     .ToArray();
 
-                extensionsToAdd.Add(X509Extensions.SubjectAlternativeName, new X509Extension(false, new DerOctetString(new GeneralNames(altNames))));
+                var ipNames = this.IpAddresses
+                    .Distinct()
+                    .Select(n => new GeneralName(GeneralName.IPAddress, n))
+                    .ToArray();
+
+                var allNames = altNames.Concat(ipNames).ToArray();
+
+                extensionsToAdd.Add(X509Extensions.SubjectAlternativeName, new X509Extension(false, new DerOctetString(new GeneralNames(allNames))));
             }
+
 
             if (requireOcspMustStaple)
             {
