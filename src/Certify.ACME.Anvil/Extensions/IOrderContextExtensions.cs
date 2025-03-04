@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -30,7 +30,7 @@ namespace Certify.ACME.Anvil
                 builder.AddName(name, value);
             }
 
-            if (string.IsNullOrWhiteSpace(csr.CommonName))
+            if (string.IsNullOrWhiteSpace(csr.CommonName) && builder.SubjectAlternativeNames.Count > 0)
             {
                 builder.AddName("CN", builder.SubjectAlternativeNames[0]);
             }
