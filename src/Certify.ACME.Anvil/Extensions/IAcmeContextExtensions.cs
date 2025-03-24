@@ -34,7 +34,7 @@ namespace Certify.ACME.Anvil
         /// Creates an account.
         /// </summary>
         /// <param name="context">The ACME context.</param>
-        /// <param name="email">The email.</param>
+        /// <param name="email">Optional email (some CAs allow registration without an email)</param>
         /// <param name="termsOfServiceAgreed">Set to <c>true</c> to accept the terms of service.</param>
         /// <param name="eabKeyId">Optional key identifier for external account binding</param>
         /// <param name="eabKey">Optional key for use with external account binding</param>
@@ -43,7 +43,13 @@ namespace Certify.ACME.Anvil
         /// The account created.
         /// </returns>
         public static Task<IAccountContext> NewAccount(this IAcmeContext context, string email, bool termsOfServiceAgreed = false, string eabKeyId = null, string eabKey = null, string eabKeyAlg = null)
-            => context.NewAccount(new[] { $"mailto:{email}" }, termsOfServiceAgreed, eabKeyId, eabKey, eabKeyAlg);
+        {
+            return context.NewAccount(
+                string.IsNullOrWhiteSpace(email) ? null : new[] { $"mailto:{email}" },
+                termsOfServiceAgreed,
+                eabKeyId, eabKey, eabKeyAlg);
+        }
+
 
         /// <summary>
         /// Gets the terms of service link from the ACME server.
