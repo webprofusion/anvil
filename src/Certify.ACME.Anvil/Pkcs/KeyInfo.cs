@@ -31,14 +31,16 @@ namespace Certify.ACME.Anvil.Pkcs
         {
             using (var streamReader = new StreamReader(stream))
             {
-                var reader = new PemReader(streamReader);
-
-                if (!(reader.ReadObject() is AsymmetricCipherKeyPair keyPair))
+                using (var reader = new PemReader(streamReader))
                 {
-                    throw new AcmeException(Strings.ErrorInvalidKeyData);
-                }
 
-                return keyPair.Export();
+                    if (!(reader.ReadObject() is AsymmetricCipherKeyPair keyPair))
+                    {
+                        throw new AcmeException(Strings.ErrorInvalidKeyData);
+                    }
+
+                    return keyPair.Export();
+                }
             }
         }
     }

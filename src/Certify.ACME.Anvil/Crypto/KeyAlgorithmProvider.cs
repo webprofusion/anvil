@@ -42,16 +42,18 @@ namespace Certify.ACME.Anvil.Crypto
         {
             using (var reader = new StringReader(pem))
             {
-                var pemReader = new PemReader(reader);
-                var untyped = pemReader.ReadObject();
-                switch (untyped)
+                using (var pemReader = new PemReader(reader))
                 {
-                    case AsymmetricCipherKeyPair keyPair:
-                        return ReadKey(keyPair.Private);
-                    case AsymmetricKeyParameter keyParam:
-                        return ReadKey(keyParam);
-                    default:
-                        throw new NotSupportedException();
+                    var untyped = pemReader.ReadObject();
+                    switch (untyped)
+                    {
+                        case AsymmetricCipherKeyPair keyPair:
+                            return ReadKey(keyPair.Private);
+                        case AsymmetricKeyParameter keyParam:
+                            return ReadKey(keyParam);
+                        default:
+                            throw new NotSupportedException();
+                    }
                 }
             }
         }
