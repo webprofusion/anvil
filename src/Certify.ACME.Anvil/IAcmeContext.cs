@@ -137,5 +137,20 @@ namespace Certify.ACME.Anvil
         /// <param name="location">The authorization location.</param>
         /// <returns>The authorization context.</returns>
         IAuthorizationContext Authorization(Uri location);
+
+        /// <summary>
+        /// Get renewal info for given certificate id
+        /// </summary>
+        /// <param name="certificateId">The CertID (see OCSP Cert ID, this is a base64url encoded hash of cert public key and serial)</param>
+        /// <returns></returns>
+        Task<AcmeRenewalInfo> GetRenewalInfo(string certificateId);
+
+        /// <summary>
+        /// Update ARI renewal info, if provider doesn't support ARI or update fails the exception is catch and no further action is taken
+        /// </summary>
+        /// <param name="certificateId"></param>
+        /// <param name="replaced"></param>
+        /// <returns></returns>
+        Task UpdateRenewalInfo(string certificateId, bool replaced);
     }
 }
