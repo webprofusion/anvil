@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Certify.ACME.Anvil.Acme
 {
     /// <summary>
-    /// Represents the ACME RenewalInfo resource (draft) https://www.ietf.org/id/draft-ietf-acme-ari-04.html
+    /// Represents the ACME RenewalInfo resource https://www.rfc-editor.org/rfc/rfc9773
     ///    
     /// {
     ///  "suggestedWindow": {

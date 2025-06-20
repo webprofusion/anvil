@@ -54,7 +54,7 @@ namespace Certify.ACME.Anvil.Acme.Resource
         public Uri KeyChange { get; }
 
         /// <summary>
-        /// Gets or sets the optional renewalInfo endpoint  See https://datatracker.ietf.org/doc/draft-ietf-acme-ari/
+        /// Gets or sets the optional renewalInfo endpoint  See https://www.rfc-editor.org/rfc/rfc9773
         /// </summary>
         /// <value>
         /// The metadata.
