@@ -30,9 +30,9 @@ namespace Certify.ACME.Anvil
                 builder.AddName(name, value);
             }
 
-            if (string.IsNullOrWhiteSpace(csr.CommonName) && builder.SubjectAlternativeNames.Count > 0)
+            if (!string.IsNullOrWhiteSpace(csr.CommonName))
             {
-                builder.AddName("CN", builder.SubjectAlternativeNames[0]);
+                builder.AddName("CN", csr.CommonName);
             }
 
             var csrBytes = builder.Generate(csr.RequireOcspMustStaple);
