@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -28,11 +28,6 @@ namespace Certify.ACME.Anvil
             foreach (var (name, value) in csr.Fields)
             {
                 builder.AddName(name, value);
-            }
-
-            if (!string.IsNullOrWhiteSpace(csr.CommonName))
-            {
-                builder.AddName("CN", csr.CommonName);
             }
 
             var csrBytes = builder.Generate(csr.RequireOcspMustStaple);
