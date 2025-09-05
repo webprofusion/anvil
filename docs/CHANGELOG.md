@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.3.3] - 2025-08-06
+- Fix duplication of CN in CSR
+
 ## [3.3.2] - 2024-10-16
 - Drop CSR extension fields not required as they can prevent issuance when validated by the CA
 

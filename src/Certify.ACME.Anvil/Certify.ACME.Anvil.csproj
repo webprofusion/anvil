@@ -1,69 +1,69 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../../misc/Certify.ACME.Anvil.props" />
+    <Import Project="../../misc/Certify.ACME.Anvil.props" />
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net7.0;</TargetFrameworks>
-    <AssemblyVersion>3.3.2</AssemblyVersion>
-    <Version>3.3.2</Version>
-    <FileVersion>3.3.2</FileVersion>
-    <Authors>Webprofusion, https://github.com/fszlin/certes Contributors</Authors>
-    <Product>Certify.ACME.Anvil</Product>
-    <Title>$(Product)</Title>
-    <Description>A client library implementation for the Automated Certificate Management Environment (ACME) protocol, as used by https://certifytheweb.com. This package is a fork of the excellent https://github.com/fszlin/certes project with updated packaging, feature updates and experimental extensions.</Description>
-    <PackageTags>ACME;letsencrypt;HTTPS;SSL;Certificate</PackageTags>
-    <PackageProjectUrl>https://github.com/webprofusion/anvil</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/webprofusion/anvil</RepositoryUrl>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Certify.ACME.xml</DocumentationFile>
-    <PackageIcon>logo.png</PackageIcon>
-    <PackageId>Webprofusion.Certify.ACME.Anvil</PackageId>
-    <AssemblyName>Certify.ACME.Anvil</AssemblyName>
-    <SignAssembly>False</SignAssembly>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <RootNamespace>Certify.ACME.Anvil</RootNamespace>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net7.0;</TargetFrameworks>
+        <AssemblyVersion>3.3.3</AssemblyVersion>
+        <Version>3.3.3</Version>
+        <FileVersion>3.3.3</FileVersion>
+        <Authors>Webprofusion, https://github.com/fszlin/certes Contributors</Authors>
+        <Product>Certify.ACME.Anvil</Product>
+        <Title>$(Product)</Title>
+        <Description>A client library implementation for the Automated Certificate Management Environment (ACME) protocol, as used by https://certifytheweb.com. This package is a fork of the excellent https://github.com/fszlin/certes project with updated packaging, feature updates and experimental extensions.</Description>
+        <PackageTags>ACME;letsencrypt;HTTPS;SSL;Certificate</PackageTags>
+        <PackageProjectUrl>https://github.com/webprofusion/anvil</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/webprofusion/anvil</RepositoryUrl>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Certify.ACME.xml</DocumentationFile>
+        <PackageIcon>logo.png</PackageIcon>
+        <PackageId>Webprofusion.Certify.ACME.Anvil</PackageId>
+        <AssemblyName>Certify.ACME.Anvil</AssemblyName>
+        <SignAssembly>False</SignAssembly>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <RootNamespace>Certify.ACME.Anvil</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\..\misc\logo.png" Pack="true" PackagePath="\" />
-    <None Include="..\..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\misc\logo.png" Pack="true" PackagePath="\" />
+        <None Include="..\..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.*" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.*" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BouncyCastle.Cryptography" Version="2.*" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.*" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Properties\Strings.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Strings.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Properties\Strings.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <DebugType>Full</DebugType>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <DebugType>Full</DebugType>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
-    <WarningLevel>5</WarningLevel>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+        <WarningLevel>5</WarningLevel>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
-    <WarningLevel>5</WarningLevel>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
+        <WarningLevel>5</WarningLevel>
+    </PropertyGroup>
 
 </Project>
