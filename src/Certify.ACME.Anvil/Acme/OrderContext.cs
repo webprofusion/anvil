@@ -58,6 +58,13 @@ namespace Certify.ACME.Anvil.Acme
         public async Task<CertificateChain> Download(string preferredChain = null)
         {
             var order = await Resource();
+
+            if (order?.Certificate == null)
+            {
+                throw new AcmeException("The order does not have a certificate URL.");
+            }
+
+
             var resp = await Context.HttpClient.Post<string>(Context, order.Certificate, null, false);
 
             var defaultChain = new CertificateChain(resp.Resource);

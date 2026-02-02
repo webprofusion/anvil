@@ -16,7 +16,7 @@ namespace Certify.ACME.Anvil.Acme
         /// <param name="resource">The resource.</param>
         /// <param name="links">The links.</param>
         /// <param name="error">The error.</param>
-        /// <param name="retryAfter">The retryAfter delay.</param>
+        /// <param name="retryAfter">The retryAfter delay in seconds.</param>
         public AcmeHttpResponse(Uri location, T resource, ILookup<string, Uri> links, AcmeError error, int retryAfter = 0)
         {
             Location = location;
@@ -63,7 +63,7 @@ namespace Certify.ACME.Anvil.Acme
         /// Gets the retry after delay.
         /// </summary>
         /// <value>
-        /// The retry after delay.
+        /// The retry after delay (in Seconds).
         /// </value>
         public int RetryAfter { get; }
     }

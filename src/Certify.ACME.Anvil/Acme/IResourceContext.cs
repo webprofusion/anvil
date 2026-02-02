@@ -18,7 +18,7 @@ namespace Certify.ACME.Anvil.Acme
         Uri Location { get; }
 
         /// <summary>
-        /// The timespan after which to retry the request
+        /// The timespan after which to retry the request (in seconds)
         /// </summary>
         int RetryAfter { get; }
 

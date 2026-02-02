@@ -63,25 +63,35 @@ namespace Certify.ACME.Anvil.Acme
             bool ensureSuccessStatusCode)
         {
 
-            var payload = await context.Sign(entity, location);
-            var response = await client.Post<T>(location, payload);
-            var retryCount = context.BadNonceRetryCount;
-            while (response.Error?.Status == System.Net.HttpStatusCode.BadRequest &&
-                response.Error.Type?.CompareTo("urn:ietf:params:acme:error:badNonce") == 0 &&
-                retryCount-- > 0)
+            try
             {
-                payload = await context.Sign(entity, location);
-                response = await client.Post<T>(location, payload);
-            }
+                var payload = await context.Sign(entity, location);
+                var response = await client.Post<T>(location, payload);
+                var retryCount = context.BadNonceRetryCount;
+                while (response.Error?.Status == System.Net.HttpStatusCode.BadRequest &&
+                    response.Error.Type?.CompareTo("urn:ietf:params:acme:error:badNonce") == 0 &&
+                    retryCount-- > 0)
+                {
+                    payload = await context.Sign(entity, location);
+                    response = await client.Post<T>(location, payload);
+                }
 
-            if (ensureSuccessStatusCode && response.Error != null)
+                if (ensureSuccessStatusCode && response.Error != null)
+                {
+                    throw new AcmeRequestException(
+                        string.Format(Strings.ErrorFetchResource, location),
+                        response.Error);
+                }
+
+                return response;
+            }
+            catch (InvalidOperationException ex)
             {
+                // if ACME server has given us a bad Uri (e.g. during downloads), we may end up here
                 throw new AcmeRequestException(
                     string.Format(Strings.ErrorFetchResource, location),
-                    response.Error);
+                    ex);
             }
-
-            return response;
         }
 
         /// <summary>
