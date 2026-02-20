@@ -104,5 +104,12 @@ namespace Certify.ACME.Anvil.Acme.Resource
 
         public string TokenAuthority { get; set; }
 
+        /// <summary>
+        /// Gets or sets the issuer domain names for dns-persist-01 challenges (draft-ietf-acme-dns-persist).
+        /// The client must choose one of these to include in the _validation-persist DNS TXT record.
+        /// </summary>
+        [JsonProperty("issuer-domain-names")]
+        public IList<string> IssuerDomainNames { get; set; }
+
     }
 }

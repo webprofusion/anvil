@@ -27,5 +27,11 @@
         /// The tkauth-01 challenge.
         /// </summary>
         public const string TkAuth01 = "tkauth-01";
+
+        /// <summary>
+        /// The dns-persist-01 challenge (draft-ietf-acme-dns-persist).
+        /// Proves domain control via a persistent DNS TXT record at _validation-persist.{domain}.
+        /// </summary>
+        public const string DnsPersist01 = "dns-persist-01";
     }
 }
