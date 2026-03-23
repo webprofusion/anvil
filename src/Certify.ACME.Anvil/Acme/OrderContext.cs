@@ -59,11 +59,20 @@ namespace Certify.ACME.Anvil.Acme
         {
             var order = await Resource();
 
-            if (order?.Certificate == null)
+            var retryCount = 5;
+
+            while (order?.Certificate == null && retryCount > 0)
             {
-                throw new AcmeException("The order does not have a certificate URL.");
+                await Task.Delay(TimeSpan.FromSeconds(Math.Max(RetryAfter, 3)));
+                order = await Resource();
+
+                retryCount--;
             }
 
+            if (order?.Certificate == null)
+            {
+                throw new AcmeException($"The order [status: {order.Status}] does not have a certificate URL. The CA has failed to complete the ACME Order process.");
+            }
 
             var resp = await Context.HttpClient.Post<string>(Context, order.Certificate, null, false);
 

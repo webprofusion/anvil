@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -70,7 +70,7 @@ namespace Certify.ACME.Anvil
         /// <returns>
         /// The certificate generated.
         /// </returns>
-        public static async Task<CertificateChain> Generate(this IOrderContext context, CsrInfo csr, IKey key, string preferredChain = null, int retryCount = 1)
+        public static async Task<CertificateChain> Generate(this IOrderContext context, CsrInfo csr, IKey key, string preferredChain = null, int retryCount = 3)
         {
             var order = await context.Resource();
             if (order.Status != OrderStatus.Ready && // draft-11
@@ -81,9 +81,9 @@ namespace Certify.ACME.Anvil
 
             order = await context.Finalize(csr, key);
 
-            while (order.Status == OrderStatus.Processing && retryCount-- > 0)
+            while ((order?.Status == OrderStatus.Processing || order.Certificate == null) && retryCount-- > 0)
             {
-                await Task.Delay(TimeSpan.FromSeconds(Math.Max(context.RetryAfter, 1)));
+                await Task.Delay(TimeSpan.FromSeconds(Math.Max(context.RetryAfter, 2)));
                 order = await context.Resource();
             }
 
