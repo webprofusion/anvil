@@ -387,7 +387,7 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
-        /// Update ARI renewal info, if provider doesn't support ARI or update fails the exception is catch and no further action is takem
+        /// Update ARI renewal info, if provider doesn't support ARI or update fails the exception is catch and no further action is taken
         /// </summary>
         /// <param name="certificateId"></param>
         /// <param name="replaced"></param>
