@@ -142,6 +142,15 @@ namespace Certify.ACME.Anvil.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retry cannot be less than zero.
+        /// </summary>
+        internal static string ErrorRetryLessThanZero {
+            get {
+                return ResourceManager.GetString("ErrorRetryLessThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unsupported resource type &apos;{0}&apos;..
         /// </summary>
         internal static string ErrorUnsupportedResourceType {

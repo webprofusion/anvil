@@ -147,4 +147,7 @@
   <data name="ErrorUnsupportedResourceType" xml:space="preserve">
     <value>Unsupported resource type '{0}'.</value>
   </data>
+  <data name="ErrorRetryLessThanZero" xml:space="preserve">
+    <value>Retry cannot be less than zero</value>
+  </data>
 </root>

@@ -65,7 +65,10 @@ namespace Certify.ACME.Anvil.Acme
         /// <inheritdoc />
         public async Task<CertificateChain> Download(Order order, string preferredChain = null)
         {
-            if (order?.Certificate == null)
+            if (order == null)
+                throw new ArgumentNullException(nameof(order));
+
+            if (order.Certificate == null)
             {
                 throw new AcmeException($"The order [status: {order.Status}] does not have a certificate URL. The CA has failed to complete the ACME Order process.");
             }

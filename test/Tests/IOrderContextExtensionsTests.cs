@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
@@ -13,13 +14,18 @@ namespace Certify.ACME.Anvil
 
         private Order BuildOrder(OrderStatus status)
         {
-            return new Order
+            var order = new Order
             {
                 Identifiers = new[] {
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                 Status = status,
             };
+
+            if (status == OrderStatus.Valid)
+                order.Certificate = new Uri("http://acme.d/order/101/cert/1234");
+
+            return order;
         }
 
         [Fact]
@@ -35,7 +41,6 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(() =>
                 {
                     currentStatus = BuildOrder(OrderStatus.Valid);
-                    currentStatus.Certificate = new System.Uri("http://acme.d/order/101/cert/1234");
                     return currentStatus;
                 });
 
@@ -75,7 +80,6 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(() =>
                 {
                     currentStatus = BuildOrder(OrderStatus.Valid);
-                    currentStatus.Certificate = new System.Uri("http://acme.d/order/101/cert/1234");
                     return currentStatus;
                 });
 
@@ -131,14 +135,7 @@ namespace Certify.ACME.Anvil
                     },
                     Status = OrderStatus.Processing,
                 })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
-                    Status = OrderStatus.Valid,
-                })
+                .ReturnsAsync(BuildOrder(OrderStatus.Valid))
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
@@ -153,14 +150,7 @@ namespace Certify.ACME.Anvil
                     },
                     Status = OrderStatus.Ready,
                 })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
-                    Status = OrderStatus.Valid,
-                });
+                .ReturnsAsync(BuildOrder(OrderStatus.Valid));
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
                 .ReturnsAsync(new Order
                 {
@@ -369,6 +359,26 @@ namespace Certify.ACME.Anvil
                 }, key));
         }
 
+        [Fact]
+        public async Task WaitForCompletionAsync_WithNegativeRetry_Throws()
+        {
+            var orderCtxMock = new Mock<IOrderContext>();
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => orderCtxMock.Object.WaitForCompletionAsync(-1));
+        }
+
+        [Fact]
+        public async Task WaitForCompletionAsync_WithZeroRetry_Success()
+        {
+            var orderCtxMock = new Mock<IOrderContext>();
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(BuildOrder(OrderStatus.Valid));
+
+            var result = await orderCtxMock.Object.WaitForCompletionAsync(0);
+
+            Assert.NotNull(result);
+            Assert.Equal(OrderStatus.Valid, result.Status);
+            Assert.NotNull(result.Certificate);
+            orderCtxMock.Verify(m => m.Resource(), Times.Once());
+        }
     }
 
 }

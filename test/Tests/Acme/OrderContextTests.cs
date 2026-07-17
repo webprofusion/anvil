@@ -73,5 +73,19 @@ namespace Certify.ACME.Anvil.Acme
             Assert.Empty(authzs);
 
         }
+
+        [Fact]
+        public async Task Download_WithNullOrder_Throws()
+        {
+            var expectedPayload = new JwsSigner(Helper.GetKeyV2())
+                .Sign("", null, location, "nonce");
+
+            contextMock.Reset();
+            httpClientMock.Reset();
+
+            var ctx = new OrderContext(contextMock.Object, location);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await ctx.Download(order:null, preferredChain: null));
+        }
     }
 }

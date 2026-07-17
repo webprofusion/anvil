@@ -66,8 +66,14 @@ namespace Certify.ACME.Anvil
         /// <param name="retryCount">The number of times to retry polling.</param>
         /// <returns>The order validated.</returns>
         /// <exception cref="AcmeException">Thrown when the order status is not Valid after completion.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when retryCount is out of range</exception>
         public static async Task<Order> WaitForCompletionAsync(this IOrderContext context, int retryCount)
         {
+            if (retryCount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(retryCount), Strings.ErrorRetryLessThanZero);
+            }
+        
             var order = await context.Resource();
 
             while (!IsTerminalState(order) && retryCount > 0)

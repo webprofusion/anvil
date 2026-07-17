@@ -54,8 +54,14 @@ namespace Certify.ACME.Anvil
         /// <param name="retryCount">The number of times to retry polling.</param>
         /// <returns>The authorization validated.</returns>
         /// <exception cref="AcmeException">Thrown when the authorization status is not Valid after completion.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when retryCount is out of range</exception>
         public static async Task<Authorization> WaitForCompletionAsync(this IAuthorizationContext context, int retryCount)
         {
+            if (retryCount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(retryCount), Properties.Strings.ErrorRetryLessThanZero);
+            }
+
             var authorization = await context.Resource();
 
             while (!IsTerminalState(authorization) && retryCount > 0)
