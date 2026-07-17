@@ -57,18 +57,14 @@ namespace Certify.ACME.Anvil.Acme
         /// <returns>The certificate chain in PEM.</returns>
         public async Task<CertificateChain> Download(string preferredChain = null)
         {
-            var order = await Resource();
+            var order = await IOrderContextExtensions.WaitForCompletionAsync(this, 5);
 
-            var retryCount = 5;
+            return await Download(order, preferredChain);
+        }
 
-            while (order?.Certificate == null && retryCount > 0)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(Math.Max(RetryAfter, 3)));
-                order = await Resource();
-
-                retryCount--;
-            }
-
+        /// <inheritdoc />
+        public async Task<CertificateChain> Download(Order order, string preferredChain = null)
+        {
             if (order?.Certificate == null)
             {
                 throw new AcmeException($"The order [status: {order.Status}] does not have a certificate URL. The CA has failed to complete the ACME Order process.");

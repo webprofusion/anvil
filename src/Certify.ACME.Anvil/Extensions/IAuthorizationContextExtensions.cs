@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -45,5 +46,40 @@ namespace Certify.ACME.Anvil
             var challenges = await authorizationContext.Challenges();
             return challenges.FirstOrDefault(c => c.Type == type);
         }
+
+        /// <summary>
+        /// Waits for the authorization to reach a terminal state (valid).
+        /// </summary>
+        /// <param name="context">The authorization context.</param>
+        /// <param name="retryCount">The number of times to retry polling.</param>
+        /// <returns>The authorization validated.</returns>
+        /// <exception cref="AcmeException">Thrown when the authorization status is not Valid after completion.</exception>
+        public static async Task<Authorization> WaitForCompletionAsync(this IAuthorizationContext context, int retryCount)
+        {
+            var authorization = await context.Resource();
+
+            while (!IsTerminalState(authorization) && retryCount > 0)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                authorization = await context.Resource();
+
+                retryCount--;
+            }
+
+            if (authorization.Status != AuthorizationStatus.Valid)
+            {
+                throw new AcmeException(Properties.Strings.ErrorChallengeValidationFailed);
+            }
+
+            return authorization;
+        }
+
+        /// <summary>
+        /// Determines whether the authorization is in a terminal state.
+        /// </summary>
+        /// <param name="authorization">The authorization to check.</param>
+        /// <returns>True if the authorization is in a terminal state; otherwise, false.</returns>
+        private static bool IsTerminalState(Authorization authorization)
+            => authorization?.Status != AuthorizationStatus.Pending;
     }
 }

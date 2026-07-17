@@ -126,6 +126,9 @@
   <data name="ErrorFinalizeFailed" xml:space="preserve">
     <value>Fail to finalize order.</value>
   </data>
+  <data name="ErrorChallengeValidationFailed" xml:space="preserve">
+    <value>Challenge validation failed or timed out.</value>
+  </data>
   <data name="ErrorInvalidBase64String" xml:space="preserve">
     <value>Illegal base64url string.</value>
   </data>

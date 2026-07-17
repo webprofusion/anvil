@@ -30,5 +30,13 @@ namespace Certify.ACME.Anvil.Acme
         /// <param name="preferredChain">The preferred Root Certificate.</param>
         /// <returns>The certificate chain in PEM.</returns>
         Task<CertificateChain> Download(string preferredChain = null);
+
+        /// <summary>
+        /// Downloads the certificate chain in PEM for the specified order.
+        /// </summary>
+        /// <param name="order">The finalized order returned by <see cref="Certify.ACME.Anvil.Acme.IOrderContext.Finalize" /> or <see cref="Certify.ACME.Anvil.IOrderContextExtensions.WaitForCompletionAsync" />.</param>
+        /// <param name="preferredChain">The preferred Root Certificate.</param>
+        /// <returns>The certificate chain in PEM.</returns>
+        Task<CertificateChain> Download(Order order, string preferredChain = null);
     }
 }

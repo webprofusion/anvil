@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
@@ -10,27 +10,33 @@ namespace Certify.ACME.Anvil
 {
     public class IOrderContextExtensionsTests
     {
+
+        private Order BuildOrder(OrderStatus status)
+        {
+            return new Order
+            {
+                Identifiers = new[] {
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
+                    },
+                Status = status,
+            };
+        }
+
         [Fact]
         public async Task CanGenerateCertificateWhenOrderReady()
         {
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
+            var currentStatus = BuildOrder(OrderStatus.Ready);
             var orderCtxMock = new Mock<IOrderContext>();
-            orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
-            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
-            {
-                Identifiers = new[] {
-                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                },
-                Status = OrderStatus.Ready,
-            });
+            orderCtxMock.Setup(m => m.Download(It.IsAny<Order>(), null)).ReturnsAsync(new CertificateChain(pem));
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(() => currentStatus);
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
-                .ReturnsAsync(new Order
+                .ReturnsAsync(() =>
                 {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Valid,
+                    currentStatus = BuildOrder(OrderStatus.Valid);
+                    currentStatus.Certificate = new System.Uri("http://acme.d/order/101/cert/1234");
+                    return currentStatus;
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
@@ -44,6 +50,8 @@ namespace Certify.ACME.Anvil
                 pem.Where(c => !char.IsWhiteSpace(c)),
                 certInfo.Certificate.ToPem().Where(c => !char.IsWhiteSpace(c)));
 
+            // Reset status to ready to test generating a certificate without a common name
+            currentStatus = BuildOrder(OrderStatus.Ready);
             var certInfoNoCn = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
@@ -59,22 +67,16 @@ namespace Certify.ACME.Anvil
         {
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
+            var currentStatus = BuildOrder(OrderStatus.Pending);
             var orderCtxMock = new Mock<IOrderContext>();
-            orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
-            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
-            {
-                Identifiers = new[] {
-                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                },
-                Status = OrderStatus.Pending,
-            });
+            orderCtxMock.Setup(m => m.Download(It.IsAny<Order>(), null)).ReturnsAsync(new CertificateChain(pem));
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(() => currentStatus);
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
-                .ReturnsAsync(new Order
+                .ReturnsAsync(() =>
                 {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Valid,
+                    currentStatus = BuildOrder(OrderStatus.Valid);
+                    currentStatus.Certificate = new System.Uri("http://acme.d/order/101/cert/1234");
+                    return currentStatus;
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
@@ -88,6 +90,8 @@ namespace Certify.ACME.Anvil
                 pem.Where(c => !char.IsWhiteSpace(c)),
                 certInfo.Certificate.ToPem().Where(c => !char.IsWhiteSpace(c)));
 
+            // Reset status to ready to test generating a certificate without a common name
+            currentStatus = BuildOrder(OrderStatus.Ready);
             var certInfoNoCn = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
@@ -104,7 +108,7 @@ namespace Certify.ACME.Anvil
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
             var orderCtxMock = new Mock<IOrderContext>();
-            orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
+            orderCtxMock.Setup(m => m.Download(It.IsAny<Order>(), null)).ReturnsAsync(new CertificateChain(pem));
             orderCtxMock.SetupSequence(m => m.Resource())
                 .ReturnsAsync(new Order
                 {
@@ -132,6 +136,7 @@ namespace Certify.ACME.Anvil
                     Identifiers = new[] {
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
+                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
                     Status = OrderStatus.Valid,
                 })
                 .ReturnsAsync(new Order
@@ -153,6 +158,7 @@ namespace Certify.ACME.Anvil
                     Identifiers = new[] {
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
+                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
                     Status = OrderStatus.Valid,
                 });
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
@@ -229,6 +235,7 @@ namespace Certify.ACME.Anvil
                         Identifiers = new[] {
                             new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                         },
+                        Certificate = certDefaultLoc,
                         Status = OrderStatus.Valid,
                     },
                     null,
@@ -245,7 +252,6 @@ namespace Certify.ACME.Anvil
                 Identifiers = new[] {
                     new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                 },
-                Certificate = certDefaultLoc,
                 Finalize = finalizeLoc,
                 Status = OrderStatus.Pending,
             });
@@ -342,45 +348,16 @@ namespace Certify.ACME.Anvil
         {
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
+            var currentStatus = BuildOrder(OrderStatus.Ready);
             var orderCtxMock = new Mock<IOrderContext>();
             orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
-            orderCtxMock.SetupSequence(m => m.Resource())
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Ready,
-                })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Ready,
-                })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Processing,
-                })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Processing,
-                });
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(() => currentStatus);
 
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
-                .ReturnsAsync(new Order
+                .ReturnsAsync(() =>
                 {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Processing,
+                    currentStatus = BuildOrder(OrderStatus.Processing);
+                    return currentStatus;
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);

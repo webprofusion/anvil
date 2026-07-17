@@ -60,6 +60,42 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
+        /// Waits for the order to reach a terminal state (valid).
+        /// </summary>
+        /// <param name="context">The order context.</param>
+        /// <param name="retryCount">The number of times to retry polling.</param>
+        /// <returns>The order validated.</returns>
+        /// <exception cref="AcmeException">Thrown when the order status is not Valid after completion.</exception>
+        public static async Task<Order> WaitForCompletionAsync(this IOrderContext context, int retryCount)
+        {
+            var order = await context.Resource();
+
+            while (!IsTerminalState(order) && retryCount > 0)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                order = await context.Resource();
+
+                retryCount--;
+            }
+
+            if (order.Status != OrderStatus.Valid)
+            {
+                throw new AcmeException(Strings.ErrorFinalizeFailed);
+            }
+
+            return order;
+        }
+
+        /// <summary>
+        /// Determines whether the order is in a terminal state.
+        /// </summary>
+        /// <param name="order">The order to check.</param>
+        /// <returns>True if the order is in a terminal state; otherwise, false.</returns>
+        private static bool IsTerminalState(Order order)
+            => (order?.Status == OrderStatus.Valid && order?.Certificate != null) 
+               || order?.Status == OrderStatus.Invalid;
+
+        /// <summary>
         /// Finalizes and download the certificate for the order.
         /// </summary>
         /// <param name="context">The order context.</param>
@@ -81,18 +117,12 @@ namespace Certify.ACME.Anvil
 
             order = await context.Finalize(csr, key);
 
-            while ((order?.Status == OrderStatus.Processing || order.Certificate == null) && retryCount-- > 0)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(Math.Max(context.RetryAfter, 2)));
-                order = await context.Resource();
-            }
-
             if (order.Status != OrderStatus.Valid)
             {
-                throw new AcmeException(Strings.ErrorFinalizeFailed);
+                order = await context.WaitForCompletionAsync(retryCount);
             }
 
-            return await context.Download(preferredChain);
+            return await context.Download(order, preferredChain);
         }
 
         /// <summary>
