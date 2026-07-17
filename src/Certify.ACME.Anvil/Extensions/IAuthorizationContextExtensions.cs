@@ -66,7 +66,7 @@ namespace Certify.ACME.Anvil
 
             while (!IsTerminalState(authorization) && retryCount > 0)
             {
-                await Task.Delay(TimeSpan.FromSeconds(3));
+                await Task.Delay(TimeSpan.FromSeconds(context.RetryAfter > 0 ? context.RetryAfter : 3));
                 authorization = await context.Resource();
 
                 retryCount--;

@@ -78,7 +78,7 @@ namespace Certify.ACME.Anvil
 
             while (!IsTerminalState(order) && retryCount > 0)
             {
-                await Task.Delay(TimeSpan.FromSeconds(3));
+                await Task.Delay(TimeSpan.FromSeconds(context.RetryAfter > 0 ? context.RetryAfter : 3));
                 order = await context.Resource();
 
                 retryCount--;
