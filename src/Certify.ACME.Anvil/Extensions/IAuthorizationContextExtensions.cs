@@ -64,8 +64,8 @@ namespace Certify.ACME.Anvil
                 context,
                 timeout,
                 cancellationToken,
-                IsTerminalState,
-                authorization =>
+                isTerminalState: authorization => authorization?.Status != AuthorizationStatus.Pending,
+                validateFinalState: authorization =>
                 {
                     if (authorization.Status != AuthorizationStatus.Valid)
                     {
@@ -73,13 +73,5 @@ namespace Certify.ACME.Anvil
                     }
                 });
         }
-
-        /// <summary>
-        /// Determines whether the authorization is in a terminal state.
-        /// </summary>
-        /// <param name="authorization">The authorization to check.</param>
-        /// <returns>True if the authorization is in a terminal state; otherwise, false.</returns>
-        private static bool IsTerminalState(Authorization authorization)
-            => authorization?.Status != AuthorizationStatus.Pending;
     }
 }

@@ -12,7 +12,7 @@ namespace Certify.ACME.Anvil
     public class IOrderContextExtensionsTests
     {
 
-        private static Order BuildOrder(OrderStatus status)
+        internal static Order BuildOrder(OrderStatus status)
         {
             var order = new Order
             {
@@ -379,6 +379,34 @@ namespace Certify.ACME.Anvil
             Assert.NotNull(result.Certificate);
             orderCtxMock.Verify(m => m.Resource(), Times.Once());
         }
-    }
 
+        [Fact]
+        public async Task WaitForCompletionAsync_ServerRetryAfter_RespectsTimeout()
+        {
+            var orderCtxMock = new Mock<IOrderContext>();
+
+            orderCtxMock.SetupSequence(m => m.Resource())
+                .ReturnsAsync(BuildOrder(OrderStatus.Processing))
+                .ReturnsAsync(BuildOrder(OrderStatus.Valid));
+            orderCtxMock.SetupGet(m => m.RetryAfter).Returns(1); // This will be ignored
+            orderCtxMock.SetupGet(m => m.NextRetry).Returns(() => DateTime.UtcNow.AddSeconds(5)); // Mock NextRetry to return a time 5 seconds in the future
+
+            var startTime = DateTime.UtcNow;
+
+            // Act: Call with 3 second timeout
+            var result = await orderCtxMock.Object.WaitForCompletionAsync(TimeSpan.FromSeconds(3));
+
+            var elapsed = DateTime.UtcNow - startTime;
+
+            // Assert: the result is valid and Resource was called exactly twice (initial + 1 retry)
+            Assert.NotNull(result);
+            Assert.Equal(OrderStatus.Valid, result.Status);
+            orderCtxMock.Verify(m => m.Resource(), Times.Exactly(2));
+
+            // Verify the elapsed time is approximately 3 seconds (not 5)
+            // Allow for some variance due to test execution overhead
+            Assert.True(elapsed.TotalSeconds >= 2.5 && elapsed.TotalSeconds <= 4,
+                $"Expected elapsed time to be ~3 seconds, but was {elapsed.TotalSeconds:F2} seconds");
+        }
+    }
 }

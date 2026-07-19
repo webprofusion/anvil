@@ -76,22 +76,13 @@ namespace Certify.ACME.Anvil
                 context,
                 timeout,
                 cancellationToken,
-                IsTerminalState,
-                order =>
+                isTerminalState: order => (order?.Status == OrderStatus.Valid && order?.Certificate != null) || order?.Status == OrderStatus.Invalid,
+                validateFinalState: order =>
                 {
                     if (order.Status != OrderStatus.Valid)
                         throw new AcmeException(Strings.ErrorFinalizeFailed);
                 });
         }
-
-        /// <summary>
-        /// Determines whether the order is in a terminal state.
-        /// </summary>
-        /// <param name="order">The order to check.</param>
-        /// <returns>True if the order is in a terminal state; otherwise, false.</returns>
-        private static bool IsTerminalState(Order order)
-            => (order?.Status == OrderStatus.Valid && order?.Certificate != null) 
-               || order?.Status == OrderStatus.Invalid;
 
         /// <summary>
         /// Finalizes and download the certificate for the order.

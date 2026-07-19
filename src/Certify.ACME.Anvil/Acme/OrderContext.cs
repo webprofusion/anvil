@@ -47,7 +47,7 @@ namespace Certify.ACME.Anvil.Acme
             var order = await Resource();
             var payload = new Order.Payload { Csr = JwsConvert.ToBase64String(csr) };
             var resp = await Context.HttpClient.Post<Order>(Context, order.Finalize, payload, true);
-            NextRetry = (resp.RetryAfter <= 0) ? null : DateTime.UtcNow.AddSeconds(RetryAfter);
+            NextRetry = (resp.RetryAfter <= 0) ? null : DateTime.UtcNow.AddSeconds(resp.RetryAfter);
             return resp.Resource;
         }
 
