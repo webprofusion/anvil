@@ -12,7 +12,7 @@ namespace Certify.ACME.Anvil
     public class IOrderContextExtensionsTests
     {
 
-        private Order BuildOrder(OrderStatus status)
+        private static Order BuildOrder(OrderStatus status)
         {
             var order = new Order
             {
@@ -165,7 +165,7 @@ namespace Certify.ACME.Anvil
             {
                 CountryName = "C",
                 CommonName = "www.example.com",
-            }, key, null, 5);
+            }, key, null, TimeSpan.FromSeconds(30));
 
             Assert.Equal(
                 pem.Where(c => !char.IsWhiteSpace(c)),
@@ -363,16 +363,16 @@ namespace Certify.ACME.Anvil
         public async Task WaitForCompletionAsync_WithNegativeRetry_Throws()
         {
             var orderCtxMock = new Mock<IOrderContext>();
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => orderCtxMock.Object.WaitForCompletionAsync(-1));
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => orderCtxMock.Object.WaitForCompletionAsync(TimeSpan.FromSeconds(-1)));
         }
 
         [Fact]
-        public async Task WaitForCompletionAsync_WithZeroRetry_Success()
+        public async Task WaitForCompletionAsync_WithZeroTimeout_Success()
         {
             var orderCtxMock = new Mock<IOrderContext>();
             orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(BuildOrder(OrderStatus.Valid));
 
-            var result = await orderCtxMock.Object.WaitForCompletionAsync(0);
+            var result = await orderCtxMock.Object.WaitForCompletionAsync(TimeSpan.Zero);
 
             Assert.NotNull(result);
             Assert.Equal(OrderStatus.Valid, result.Status);

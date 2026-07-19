@@ -34,7 +34,7 @@ namespace Certify.ACME.Anvil
         public async Task WaitForCompletionAsync_WithNegativeRetry_Throws()
         {
             var ctxMock = new Mock<IAuthorizationContext>();
-            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => ctxMock.Object.WaitForCompletionAsync(-1));
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => ctxMock.Object.WaitForCompletionAsync(TimeSpan.FromSeconds(-1)));
         }
     }
 }

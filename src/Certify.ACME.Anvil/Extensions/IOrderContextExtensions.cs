@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -63,33 +64,24 @@ namespace Certify.ACME.Anvil
         /// Waits for the order to reach a terminal state (valid).
         /// </summary>
         /// <param name="context">The order context.</param>
-        /// <param name="retryCount">The number of times to retry polling.</param>
+        /// <param name="timeout">The maximum time to wait for completion. Use TimeSpan.Zero to check once without retrying.</param>
+        /// <param name="cancellationToken">Cancellation token to allow external cancellation of the polling operation.</param>
         /// <returns>The order validated.</returns>
         /// <exception cref="AcmeException">Thrown when the order status is not Valid after completion.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when retryCount is out of range</exception>
-        public static async Task<Order> WaitForCompletionAsync(this IOrderContext context, int retryCount)
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when timeout is negative.</exception>
+        /// <exception cref="OperationCanceledException">Thrown when the operation is cancelled.</exception>
+        public static Task<Order> WaitForCompletionAsync(this IOrderContext context, TimeSpan timeout, CancellationToken cancellationToken = default)
         {
-            if (retryCount < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(retryCount), Strings.ErrorRetryLessThanZero);
-            }
-        
-            var order = await context.Resource();
-
-            while (!IsTerminalState(order) && retryCount > 0)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(context.RetryAfter > 0 ? context.RetryAfter : 3));
-                order = await context.Resource();
-
-                retryCount--;
-            }
-
-            if (order.Status != OrderStatus.Valid)
-            {
-                throw new AcmeException(Strings.ErrorFinalizeFailed);
-            }
-
-            return order;
+            return ResourceContextPollingHelper.WaitForCompletionAsync(
+                context,
+                timeout,
+                cancellationToken,
+                IsTerminalState,
+                order =>
+                {
+                    if (order.Status != OrderStatus.Valid)
+                        throw new AcmeException(Strings.ErrorFinalizeFailed);
+                });
         }
 
         /// <summary>
@@ -107,12 +99,32 @@ namespace Certify.ACME.Anvil
         /// <param name="context">The order context.</param>
         /// <param name="csr">The CSR.</param>
         /// <param name="key">The private key for the certificate.</param>
-        /// <param name="retryCount">Number of retries when the Order is in 'processing' state. (default = 1)</param>
         /// <param name="preferredChain">The preferred Root Certificate.</param>
+        /// <param name="retryCount">Number of retries when the Order is in 'processing' state. (default = 3)</param>
         /// <returns>
         /// The certificate generated.
         /// </returns>
-        public static async Task<CertificateChain> Generate(this IOrderContext context, CsrInfo csr, IKey key, string preferredChain = null, int retryCount = 3)
+        [Obsolete("Use Generate(context, csr, key, preferredChain, timeout, cancellationToken) instead.")]
+        public static Task<CertificateChain> Generate(this IOrderContext context, CsrInfo csr, IKey key, string preferredChain = null, int retryCount = 3)
+        {
+            // Estimate total timeout based on inputs. Actual retries may be fewer if the order reaches a terminal state sooner.
+            var estimatedTimeout = TimeSpan.FromSeconds(Math.Max(context.RetryAfter, 2) * retryCount);
+            return Generate(context, csr, key, preferredChain, estimatedTimeout, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Finalizes and download the certificate for the order.
+        /// </summary>
+        /// <param name="context">The order context.</param>
+        /// <param name="csr">The CSR.</param>
+        /// <param name="key">The private key for the certificate.</param>
+        /// <param name="preferredChain">The preferred Root Certificate.</param>
+        /// <param name="timeout">Maximum time to wait for the Order to reach 'valid' state.</param>
+        /// <param name="cancellationToken">Cancellation token to allow external cancellation of the polling operation.</param>
+        /// <returns>
+        /// The certificate generated.
+        /// </returns>
+        public static async Task<CertificateChain> Generate(this IOrderContext context, CsrInfo csr, IKey key, string preferredChain, TimeSpan timeout, CancellationToken cancellationToken = default)
         {
             var order = await context.Resource();
             if (order.Status != OrderStatus.Ready && // draft-11
@@ -125,7 +137,7 @@ namespace Certify.ACME.Anvil
 
             if (order.Status != OrderStatus.Valid)
             {
-                order = await context.WaitForCompletionAsync(retryCount);
+                order = await context.WaitForCompletionAsync(timeout, cancellationToken);
             }
 
             return await context.Download(order, preferredChain);

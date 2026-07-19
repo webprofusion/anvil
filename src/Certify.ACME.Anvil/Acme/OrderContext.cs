@@ -47,6 +47,7 @@ namespace Certify.ACME.Anvil.Acme
             var order = await Resource();
             var payload = new Order.Payload { Csr = JwsConvert.ToBase64String(csr) };
             var resp = await Context.HttpClient.Post<Order>(Context, order.Finalize, payload, true);
+            NextRetry = (resp.RetryAfter <= 0) ? null : DateTime.UtcNow.AddSeconds(RetryAfter);
             return resp.Resource;
         }
 
@@ -57,7 +58,7 @@ namespace Certify.ACME.Anvil.Acme
         /// <returns>The certificate chain in PEM.</returns>
         public async Task<CertificateChain> Download(string preferredChain = null)
         {
-            var order = await IOrderContextExtensions.WaitForCompletionAsync(this, 5);
+            var order = await IOrderContextExtensions.WaitForCompletionAsync(this, TimeSpan.FromSeconds(15));
 
             return await Download(order, preferredChain);
         }

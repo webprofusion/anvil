@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -51,33 +52,26 @@ namespace Certify.ACME.Anvil
         /// Waits for the authorization to reach a terminal state (valid).
         /// </summary>
         /// <param name="context">The authorization context.</param>
-        /// <param name="retryCount">The number of times to retry polling.</param>
+        /// <param name="timeout">The maximum time to wait for completion. Use TimeSpan.Zero to check once without retrying.</param>
+        /// <param name="cancellationToken">Cancellation token to allow external cancellation of the polling operation.</param>
         /// <returns>The authorization validated.</returns>
         /// <exception cref="AcmeException">Thrown when the authorization status is not Valid after completion.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when retryCount is out of range</exception>
-        public static async Task<Authorization> WaitForCompletionAsync(this IAuthorizationContext context, int retryCount)
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when timeout is negative.</exception>
+        /// <exception cref="OperationCanceledException">Thrown when the operation is cancelled.</exception>
+        public static Task<Authorization> WaitForCompletionAsync(this IAuthorizationContext context, TimeSpan timeout, CancellationToken cancellationToken = default)
         {
-            if (retryCount < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(retryCount), Properties.Strings.ErrorRetryLessThanZero);
-            }
-
-            var authorization = await context.Resource();
-
-            while (!IsTerminalState(authorization) && retryCount > 0)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(context.RetryAfter > 0 ? context.RetryAfter : 3));
-                authorization = await context.Resource();
-
-                retryCount--;
-            }
-
-            if (authorization.Status != AuthorizationStatus.Valid)
-            {
-                throw new AcmeException(Properties.Strings.ErrorChallengeValidationFailed);
-            }
-
-            return authorization;
+            return ResourceContextPollingHelper.WaitForCompletionAsync(
+                context,
+                timeout,
+                cancellationToken,
+                IsTerminalState,
+                authorization =>
+                {
+                    if (authorization.Status != AuthorizationStatus.Valid)
+                    {
+                        throw new AcmeException(Properties.Strings.ErrorChallengeValidationFailed);
+                    }
+                });
         }
 
         /// <summary>

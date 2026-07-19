@@ -30,6 +30,11 @@ namespace Certify.ACME.Anvil.Acme
         /// </summary>
         public int RetryAfter { get; protected set; }
 
+        /// <summary>
+        /// Gets the next retry time if available from the server.
+        /// </summary>
+        public DateTime? NextRetry { get; protected set; }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityContext{T}"/> class.
@@ -51,6 +56,7 @@ namespace Certify.ACME.Anvil.Acme
         public virtual async Task<T> Resource()
         {
             var resp = await Context.HttpClient.Post<T>(Context, Location, null, true);
+            NextRetry = (resp.RetryAfter <= 0) ? null : DateTime.UtcNow.AddSeconds(RetryAfter);
             return resp.Resource;
         }
     }
