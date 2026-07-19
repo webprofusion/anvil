@@ -11,9 +11,75 @@ namespace Certify.ACME.Anvil.Acme
 {
     public class OrderContextTests
     {
-        private Uri location = new Uri("http://acme.d/order/101");
+        private static readonly Uri location = new Uri("http://acme.d/order/101");
         private Mock<IAcmeContext> contextMock = new Mock<IAcmeContext>(MockBehavior.Strict);
-        private Mock<IAcmeHttpClient> httpClientMock = new Mock<IAcmeHttpClient>(MockBehavior.Strict);
+        private readonly JwsPayload expectedPayload = new JwsSigner(Helper.GetKeyV2()).Sign("", null, location, "nonce");
+
+        private Mock<IAcmeHttpClient> GetHttpClientMock()
+        {
+            contextMock.Reset();
+            
+            var httpClientMock = new Mock<IAcmeHttpClient>(MockBehavior.Strict);
+
+            contextMock
+                .Setup(c => c.GetDirectory(false))
+                .ReturnsAsync(Helper.MockDirectoryV2);
+            contextMock
+                .SetupGet(c => c.AccountKey)
+                .Returns(Helper.GetKeyV2());
+            contextMock
+                .SetupGet(c => c.BadNonceRetryCount)
+                .Returns(1);
+            contextMock.SetupGet(c => c.HttpClient).Returns(httpClientMock.Object);
+            contextMock
+                .Setup(c => c.Sign(It.IsAny<object>(), location))
+                .Callback((object payload, Uri loc) =>
+                {
+                    Assert.Null(payload);
+                    Assert.Equal(location, loc);
+                })
+                .ReturnsAsync(expectedPayload);
+
+            return httpClientMock;
+        }
+
+        private Mock<IAcmeHttpClient> GetHttpClientMockForFinalize(int retryAfter)
+        {
+            var finalizeUri = new Uri("http://acme.d/order/101/finalize");
+            var order = new Order
+            {
+                Status = OrderStatus.Ready,
+                Finalize = finalizeUri
+            };
+            var finalizedOrder = new Order
+            {
+                Status = OrderStatus.Processing,
+                Finalize = finalizeUri
+            };
+
+            var httpClientMock = GetHttpClientMock();
+
+            // Mock the initial Resource() call
+            httpClientMock
+                .Setup(m => m.Post<Order>(location, It.IsAny<JwsPayload>()))
+                .ReturnsAsync(new AcmeHttpResponse<Order>(location, order, default, default));
+
+            // Mock the Finalize POST call with specified retryAfter
+            contextMock
+                .Setup(c => c.Sign(It.IsAny<Order.Payload>(), finalizeUri))
+                .Callback((object payload, Uri loc) =>
+                {
+                    var orderPayload = Assert.IsType<Order.Payload>(payload);
+                    Assert.NotNull(orderPayload.Csr);
+                })
+                .ReturnsAsync(expectedPayload);
+
+            httpClientMock
+                .Setup(m => m.Post<Order>(finalizeUri, It.IsAny<JwsPayload>()))
+                .ReturnsAsync(new AcmeHttpResponse<Order>(finalizeUri, finalizedOrder, default, default, retryAfter: retryAfter));
+
+            return httpClientMock;
+        }
 
         [Fact]
         public async Task CanLoadAuthorizations()
@@ -27,30 +93,8 @@ namespace Certify.ACME.Anvil.Acme
                 }
             };
 
-            var expectedPayload = new JwsSigner(Helper.GetKeyV2())
-                .Sign("", null, location, "nonce");
+            var httpClientMock = GetHttpClientMock();
 
-            contextMock.Reset();
-            httpClientMock.Reset();
-
-            contextMock
-                .Setup(c => c.GetDirectory(false))
-                .ReturnsAsync(Helper.MockDirectoryV2);
-            contextMock
-                .SetupGet(c => c.AccountKey)
-                .Returns(Helper.GetKeyV2());
-            contextMock
-                .SetupGet(c => c.BadNonceRetryCount)
-                .Returns(1);
-            contextMock.SetupGet(c => c.HttpClient).Returns(httpClientMock.Object);
-            contextMock
-                .Setup(c => c.Sign(It.IsAny<object>(), It.IsAny<Uri>()))
-                .Callback((object payload, Uri loc) =>
-                {
-                    Assert.Null(payload);
-                    Assert.Equal(location, loc);
-                })
-                .ReturnsAsync(expectedPayload);
             httpClientMock
                 .Setup(m => m.Post<Order>(location, It.IsAny<JwsPayload>()))
                 .Callback((Uri _, object o) =>
@@ -72,6 +116,106 @@ namespace Certify.ACME.Anvil.Acme
             authzs = await ctx.Authorizations();
             Assert.Empty(authzs);
 
+        }
+
+        [Fact]
+        public async Task Download_WithNullOrder_Throws()
+        {
+            contextMock.Reset();
+
+            var ctx = new OrderContext(contextMock.Object, location);
+
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => await ctx.Download(order: null, preferredChain: null));
+        }
+
+        [Fact]
+        public async Task Download_WithIncompleteOrder_Throws()
+        {
+            contextMock.Reset();
+            
+            var ctx = new OrderContext(contextMock.Object, location);
+
+            await Assert.ThrowsAsync<AcmeException>(async () => await ctx.Download(order: IOrderContextExtensionsTests.BuildOrder(OrderStatus.Processing), preferredChain: null));
+        }
+
+        [Fact]
+        public async Task Resource_WithRetryAfterInPast_SetsNextRetryToNull()
+        {
+            var order = new Order
+            {
+                Status = OrderStatus.Pending
+            };
+
+            // Mock with retryAfter in the past (negative value indicates past)
+            GetHttpClientMock()
+                .Setup(m => m.Post<Order>(location, It.IsAny<JwsPayload>()))
+                .ReturnsAsync(new AcmeHttpResponse<Order>(location, order, default, default, retryAfter: -10));
+
+            var ctx = new OrderContext(contextMock.Object, location);
+            var result = await ctx.Resource();
+
+            Assert.Equal(order, result);
+            Assert.Null(ctx.NextRetry); // Should be null when retryAfter is in the past
+        }
+
+        [Fact]
+        public async Task Resource_WithRetryAfterInFuture_SetsNextRetry()
+        {
+            var order = new Order
+            {
+                Status = OrderStatus.Processing
+            };
+
+            // Mock with retryAfter in the future (positive value in seconds)
+            var retryAfterSeconds = 30;
+            GetHttpClientMock()
+                .Setup(m => m.Post<Order>(location, It.IsAny<JwsPayload>()))
+                .ReturnsAsync(new AcmeHttpResponse<Order>(location, order, default, default, retryAfter: retryAfterSeconds));
+
+            var beforeCall = DateTime.UtcNow;
+            var ctx = new OrderContext(contextMock.Object, location);
+            var result = await ctx.Resource();
+            var afterCall = DateTime.UtcNow;
+
+            Assert.Equal(order, result);
+            Assert.NotNull(ctx.NextRetry);
+
+            // Verify NextRetry is set to approximately retryAfterSeconds in the future
+            var expectedRetry = beforeCall.AddSeconds(retryAfterSeconds);
+            Assert.True(ctx.NextRetry.Value >= expectedRetry && ctx.NextRetry.Value <= afterCall.AddSeconds(retryAfterSeconds));
+        }
+
+        [Fact]
+        public async Task Finalize_WithRetryAfterInPast_SetsNextRetryToNull()
+        {
+            var csr = new byte[] { 0x01, 0x02, 0x03 };
+            GetHttpClientMockForFinalize(retryAfter: -10);
+
+            var ctx = new OrderContext(contextMock.Object, location);
+            var result = await ctx.Finalize(csr);
+
+            Assert.NotNull(result);
+            Assert.Null(ctx.NextRetry); // Should be null when retryAfter is in the past
+        }
+
+        [Fact]
+        public async Task Finalize_WithRetryAfterInFuture_SetsNextRetry()
+        {
+            var csr = new byte[] { 0x01, 0x02, 0x03 };
+            var retryAfterSeconds = 30;
+            GetHttpClientMockForFinalize(retryAfter: retryAfterSeconds);
+
+            var beforeCall = DateTime.UtcNow;
+            var ctx = new OrderContext(contextMock.Object, location);
+            var result = await ctx.Finalize(csr);
+            var afterCall = DateTime.UtcNow;
+
+            Assert.NotNull(result);
+            Assert.NotNull(ctx.NextRetry);
+
+            // Verify NextRetry is set to approximately retryAfterSeconds in the future
+            var expectedRetry = beforeCall.AddSeconds(retryAfterSeconds);
+            Assert.True(ctx.NextRetry.Value >= expectedRetry && ctx.NextRetry.Value <= afterCall.AddSeconds(retryAfterSeconds));
         }
     }
 }

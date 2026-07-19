@@ -23,6 +23,11 @@ namespace Certify.ACME.Anvil.Acme
         int RetryAfter { get; }
 
         /// <summary>
+        /// Gets the next retry time if available from the server.
+        /// </summary>
+        DateTime? NextRetry { get; }
+
+        /// <summary>
         /// Gets the ACME resource.
         /// </summary>
         /// <returns>The resource entity.</returns>

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -44,6 +46,32 @@ namespace Certify.ACME.Anvil
         {
             var challenges = await authorizationContext.Challenges();
             return challenges.FirstOrDefault(c => c.Type == type);
+        }
+
+        /// <summary>
+        /// Waits for the authorization to reach a terminal state (valid).
+        /// </summary>
+        /// <param name="context">The authorization context.</param>
+        /// <param name="timeout">The maximum time to wait for completion. Use TimeSpan.Zero to check once without retrying.</param>
+        /// <param name="cancellationToken">Cancellation token to allow external cancellation of the polling operation.</param>
+        /// <returns>The authorization validated.</returns>
+        /// <exception cref="AcmeException">Thrown when the authorization status is not Valid after completion.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when timeout is negative.</exception>
+        /// <exception cref="OperationCanceledException">Thrown when the operation is cancelled.</exception>
+        public static Task<Authorization> WaitForCompletionAsync(this IAuthorizationContext context, TimeSpan timeout, CancellationToken cancellationToken = default)
+        {
+            return ResourceContextPollingHelper.WaitForCompletionAsync(
+                context,
+                timeout,
+                cancellationToken,
+                isTerminalState: authorization => authorization?.Status != AuthorizationStatus.Pending,
+                validateFinalState: authorization =>
+                {
+                    if (authorization.Status != AuthorizationStatus.Valid)
+                    {
+                        throw new AcmeException(Properties.Strings.ErrorChallengeValidationFailed);
+                    }
+                });
         }
     }
 }

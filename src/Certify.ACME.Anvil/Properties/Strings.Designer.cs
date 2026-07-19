@@ -61,6 +61,15 @@ namespace Certify.ACME.Anvil.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Challenge validation failed or timed out..
+        /// </summary>
+        internal static string ErrorChallengeValidationFailed {
+            get {
+                return ResourceManager.GetString("ErrorChallengeValidationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fail to fetch new nonce..
         /// </summary>
         internal static string ErrorFetchNonce {
@@ -129,6 +138,15 @@ namespace Certify.ACME.Anvil.Properties {
         internal static string ErrorMissingCertificateData {
             get {
                 return ResourceManager.GetString("ErrorMissingCertificateData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retry cannot be less than zero.
+        /// </summary>
+        internal static string ErrorRetryLessThanZero {
+            get {
+                return ResourceManager.GetString("ErrorRetryLessThanZero", resourceCulture);
             }
         }
         

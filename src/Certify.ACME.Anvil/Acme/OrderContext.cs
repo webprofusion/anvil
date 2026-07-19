@@ -47,6 +47,7 @@ namespace Certify.ACME.Anvil.Acme
             var order = await Resource();
             var payload = new Order.Payload { Csr = JwsConvert.ToBase64String(csr) };
             var resp = await Context.HttpClient.Post<Order>(Context, order.Finalize, payload, true);
+            NextRetry = (resp.RetryAfter <= 0) ? null : DateTime.UtcNow.AddSeconds(resp.RetryAfter);
             return resp.Resource;
         }
 
@@ -57,19 +58,18 @@ namespace Certify.ACME.Anvil.Acme
         /// <returns>The certificate chain in PEM.</returns>
         public async Task<CertificateChain> Download(string preferredChain = null)
         {
-            var order = await Resource();
+            var order = await IOrderContextExtensions.WaitForCompletionAsync(this, TimeSpan.FromSeconds(15));
 
-            var retryCount = 5;
+            return await Download(order, preferredChain);
+        }
 
-            while (order?.Certificate == null && retryCount > 0)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(Math.Max(RetryAfter, 3)));
-                order = await Resource();
+        /// <inheritdoc />
+        public async Task<CertificateChain> Download(Order order, string preferredChain = null)
+        {
+            if (order == null)
+                throw new ArgumentNullException(nameof(order));
 
-                retryCount--;
-            }
-
-            if (order?.Certificate == null)
+            if (order.Certificate == null)
             {
                 throw new AcmeException($"The order [status: {order.Status}] does not have a certificate URL. The CA has failed to complete the ACME Order process.");
             }

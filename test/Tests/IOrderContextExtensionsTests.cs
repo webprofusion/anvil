@@ -1,3 +1,4 @@
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,27 +11,37 @@ namespace Certify.ACME.Anvil
 {
     public class IOrderContextExtensionsTests
     {
+
+        internal static Order BuildOrder(OrderStatus status)
+        {
+            var order = new Order
+            {
+                Identifiers = new[] {
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
+                    },
+                Status = status,
+            };
+
+            if (status == OrderStatus.Valid)
+                order.Certificate = new Uri("http://acme.d/order/101/cert/1234");
+
+            return order;
+        }
+
         [Fact]
         public async Task CanGenerateCertificateWhenOrderReady()
         {
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
+            var currentStatus = BuildOrder(OrderStatus.Ready);
             var orderCtxMock = new Mock<IOrderContext>();
-            orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
-            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
-            {
-                Identifiers = new[] {
-                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                },
-                Status = OrderStatus.Ready,
-            });
+            orderCtxMock.Setup(m => m.Download(It.IsAny<Order>(), null)).ReturnsAsync(new CertificateChain(pem));
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(() => currentStatus);
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
-                .ReturnsAsync(new Order
+                .ReturnsAsync(() =>
                 {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Valid,
+                    currentStatus = BuildOrder(OrderStatus.Valid);
+                    return currentStatus;
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
@@ -44,6 +55,8 @@ namespace Certify.ACME.Anvil
                 pem.Where(c => !char.IsWhiteSpace(c)),
                 certInfo.Certificate.ToPem().Where(c => !char.IsWhiteSpace(c)));
 
+            // Reset status to ready to test generating a certificate without a common name
+            currentStatus = BuildOrder(OrderStatus.Ready);
             var certInfoNoCn = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
@@ -59,22 +72,15 @@ namespace Certify.ACME.Anvil
         {
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
+            var currentStatus = BuildOrder(OrderStatus.Pending);
             var orderCtxMock = new Mock<IOrderContext>();
-            orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
-            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(new Order
-            {
-                Identifiers = new[] {
-                    new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                },
-                Status = OrderStatus.Pending,
-            });
+            orderCtxMock.Setup(m => m.Download(It.IsAny<Order>(), null)).ReturnsAsync(new CertificateChain(pem));
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(() => currentStatus);
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
-                .ReturnsAsync(new Order
+                .ReturnsAsync(() =>
                 {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Valid,
+                    currentStatus = BuildOrder(OrderStatus.Valid);
+                    return currentStatus;
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
@@ -88,6 +94,8 @@ namespace Certify.ACME.Anvil
                 pem.Where(c => !char.IsWhiteSpace(c)),
                 certInfo.Certificate.ToPem().Where(c => !char.IsWhiteSpace(c)));
 
+            // Reset status to ready to test generating a certificate without a common name
+            currentStatus = BuildOrder(OrderStatus.Ready);
             var certInfoNoCn = await orderCtxMock.Object.Generate(new CsrInfo
             {
                 CountryName = "C",
@@ -104,7 +112,7 @@ namespace Certify.ACME.Anvil
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
             var orderCtxMock = new Mock<IOrderContext>();
-            orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
+            orderCtxMock.Setup(m => m.Download(It.IsAny<Order>(), null)).ReturnsAsync(new CertificateChain(pem));
             orderCtxMock.SetupSequence(m => m.Resource())
                 .ReturnsAsync(new Order
                 {
@@ -127,13 +135,7 @@ namespace Certify.ACME.Anvil
                     },
                     Status = OrderStatus.Processing,
                 })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Valid,
-                })
+                .ReturnsAsync(BuildOrder(OrderStatus.Valid))
                 .ReturnsAsync(new Order
                 {
                     Identifiers = new[] {
@@ -148,13 +150,7 @@ namespace Certify.ACME.Anvil
                     },
                     Status = OrderStatus.Ready,
                 })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Valid,
-                });
+                .ReturnsAsync(BuildOrder(OrderStatus.Valid));
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
                 .ReturnsAsync(new Order
                 {
@@ -169,7 +165,7 @@ namespace Certify.ACME.Anvil
             {
                 CountryName = "C",
                 CommonName = "www.example.com",
-            }, key, null, 5);
+            }, key, null, TimeSpan.FromSeconds(30));
 
             Assert.Equal(
                 pem.Where(c => !char.IsWhiteSpace(c)),
@@ -229,6 +225,7 @@ namespace Certify.ACME.Anvil
                         Identifiers = new[] {
                             new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                         },
+                        Certificate = certDefaultLoc,
                         Status = OrderStatus.Valid,
                     },
                     null,
@@ -245,7 +242,6 @@ namespace Certify.ACME.Anvil
                 Identifiers = new[] {
                     new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                 },
-                Certificate = certDefaultLoc,
                 Finalize = finalizeLoc,
                 Status = OrderStatus.Pending,
             });
@@ -342,45 +338,16 @@ namespace Certify.ACME.Anvil
         {
             var pem = File.ReadAllText("./Data/cert-es256.pem");
 
+            var currentStatus = BuildOrder(OrderStatus.Ready);
             var orderCtxMock = new Mock<IOrderContext>();
             orderCtxMock.Setup(m => m.Download(null)).ReturnsAsync(new CertificateChain(pem));
-            orderCtxMock.SetupSequence(m => m.Resource())
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Ready,
-                })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Ready,
-                })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Processing,
-                })
-                .ReturnsAsync(new Order
-                {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Processing,
-                });
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(() => currentStatus);
 
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
-                .ReturnsAsync(new Order
+                .ReturnsAsync(() =>
                 {
-                    Identifiers = new[] {
-                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
-                    },
-                    Status = OrderStatus.Processing,
+                    currentStatus = BuildOrder(OrderStatus.Processing);
+                    return currentStatus;
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
@@ -392,6 +359,54 @@ namespace Certify.ACME.Anvil
                 }, key));
         }
 
-    }
+        [Fact]
+        public async Task WaitForCompletionAsync_WithNegativeRetry_Throws()
+        {
+            var orderCtxMock = new Mock<IOrderContext>();
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => orderCtxMock.Object.WaitForCompletionAsync(TimeSpan.FromSeconds(-1)));
+        }
 
+        [Fact]
+        public async Task WaitForCompletionAsync_WithZeroTimeout_Success()
+        {
+            var orderCtxMock = new Mock<IOrderContext>();
+            orderCtxMock.Setup(m => m.Resource()).ReturnsAsync(BuildOrder(OrderStatus.Valid));
+
+            var result = await orderCtxMock.Object.WaitForCompletionAsync(TimeSpan.Zero);
+
+            Assert.NotNull(result);
+            Assert.Equal(OrderStatus.Valid, result.Status);
+            Assert.NotNull(result.Certificate);
+            orderCtxMock.Verify(m => m.Resource(), Times.Once());
+        }
+
+        [Fact]
+        public async Task WaitForCompletionAsync_ServerRetryAfter_RespectsTimeout()
+        {
+            var orderCtxMock = new Mock<IOrderContext>();
+
+            orderCtxMock.SetupSequence(m => m.Resource())
+                .ReturnsAsync(BuildOrder(OrderStatus.Processing))
+                .ReturnsAsync(BuildOrder(OrderStatus.Valid));
+            orderCtxMock.SetupGet(m => m.RetryAfter).Returns(1); // This will be ignored
+            orderCtxMock.SetupGet(m => m.NextRetry).Returns(() => DateTime.UtcNow.AddSeconds(5)); // Mock NextRetry to return a time 5 seconds in the future
+
+            var startTime = DateTime.UtcNow;
+
+            // Act: Call with 3 second timeout
+            var result = await orderCtxMock.Object.WaitForCompletionAsync(TimeSpan.FromSeconds(3));
+
+            var elapsed = DateTime.UtcNow - startTime;
+
+            // Assert: the result is valid and Resource was called exactly twice (initial + 1 retry)
+            Assert.NotNull(result);
+            Assert.Equal(OrderStatus.Valid, result.Status);
+            orderCtxMock.Verify(m => m.Resource(), Times.Exactly(2));
+
+            // Verify the elapsed time is approximately 3 seconds (not 5)
+            // Allow for some variance due to test execution overhead
+            Assert.True(elapsed.TotalSeconds >= 2.5 && elapsed.TotalSeconds <= 4,
+                $"Expected elapsed time to be ~3 seconds, but was {elapsed.TotalSeconds:F2} seconds");
+        }
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
 using Moq;
@@ -27,6 +28,13 @@ namespace Certify.ACME.Anvil
                 .ReturnsAsync(new[] { challengeMock.Object });
 
             Assert.Equal(challengeMock.Object, await ctxMock.Object.TlsAlpn());
+        }
+
+        [Fact]
+        public async Task WaitForCompletionAsync_WithNegativeRetry_Throws()
+        {
+            var ctxMock = new Mock<IAuthorizationContext>();
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => ctxMock.Object.WaitForCompletionAsync(TimeSpan.FromSeconds(-1)));
         }
     }
 }
