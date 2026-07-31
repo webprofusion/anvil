@@ -80,7 +80,8 @@ namespace Certify.ACME.Anvil.Acme
                 {
                     throw new AcmeRequestException(
                         string.Format(Strings.ErrorFetchResource, location),
-                        response.Error);
+                        response.Error,
+                        response.RetryAfter);
                 }
 
                 return response;
@@ -132,7 +133,8 @@ namespace Certify.ACME.Anvil.Acme
             {
                 throw new AcmeRequestException(
                     string.Format(Strings.ErrorFetchResource, location),
-                    response.Error);
+                    response.Error,
+                    response.RetryAfter);
             }
 
             return response;

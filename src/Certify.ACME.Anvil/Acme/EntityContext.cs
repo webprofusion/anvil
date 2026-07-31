@@ -51,6 +51,7 @@ namespace Certify.ACME.Anvil.Acme
         public virtual async Task<T> Resource()
         {
             var resp = await Context.HttpClient.Post<T>(Context, Location, null, true);
+            RetryAfter = resp.RetryAfter;
             return resp.Resource;
         }
     }
