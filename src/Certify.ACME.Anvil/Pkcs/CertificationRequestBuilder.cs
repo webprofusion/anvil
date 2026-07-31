@@ -8,7 +8,6 @@ using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Pkcs;
-using Org.BouncyCastle.X509;
 
 namespace Certify.ACME.Anvil.Pkcs
 {
@@ -277,25 +276,6 @@ namespace Certify.ACME.Anvil.Pkcs
             var csr = new Pkcs10CertificationRequest(signatureFactory, x509, keyPair.Public, new DerSet(attribute));
 
             return csr.GetDerEncoded();
-        }
-
-        private byte[] CustomCSRBuilder(Asn1SignatureFactory signatureFactory, AsymmetricKeyParameter pubKey, DerSet attributes)
-        {
-            var sigAlgId = (AlgorithmIdentifier)signatureFactory.AlgorithmDetails;
-
-            var pubKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(pubKey);
-
-            var version = new DerInteger(0);
-
-            var v = new Asn1EncodableVector(version, pubKeyInfo);
-            v.AddOptionalTagged(false, 0, attributes);
-
-            var asDer = new DerSequence(v);
-
-            var bytes = asDer.GetDerEncoded();
-            return bytes;
-            // Generate Signature.
-            //var sigBits = new DerBitString(((IBlockResult)streamCalculator.GetResult()).Collect());
         }
 
         private void LoadKeyPair()
