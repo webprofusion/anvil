@@ -2,7 +2,7 @@
     <Import Project="../../misc/Certify.ACME.Anvil.props" />
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net7.0;</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net10.0;</TargetFrameworks>
         <AssemblyVersion>3.3.3</AssemblyVersion>
         <Version>3.3.3</Version>
         <FileVersion>3.3.3</FileVersion>
@@ -62,7 +62,7 @@
         <WarningLevel>5</WarningLevel>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0|AnyCPU'">
         <WarningLevel>5</WarningLevel>
     </PropertyGroup>
 

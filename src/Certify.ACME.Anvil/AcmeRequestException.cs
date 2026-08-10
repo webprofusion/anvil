@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Json;
 using Newtonsoft.Json;
@@ -25,6 +24,14 @@ namespace Certify.ACME.Anvil
         /// The error occurred while processing ACME operations.
         /// </value>
         public AcmeError Error { get; private set; }
+
+        /// <summary>
+        /// Gets the delay in seconds requested by the server via the Retry-After header, or zero if not supplied.
+        /// </summary>
+        /// <value>
+        /// The retry delay in seconds.
+        /// </value>
+        public int RetryAfter { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AcmeRequestException"/> class.
@@ -54,6 +61,19 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="AcmeException" /> class.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="error">The error occurred while processing ACME operations.</param>
+        /// <param name="retryAfter">The retry delay in seconds requested by the server, if any.</param>
+        public AcmeRequestException(string message, AcmeError error, int retryAfter)
+            : base(message)
+        {
+            Error = error;
+            RetryAfter = retryAfter;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AcmeRequestException"/> class.
         /// </summary>
         /// <param name="message">
@@ -67,53 +87,6 @@ namespace Certify.ACME.Anvil
         public AcmeRequestException(string message, Exception innerException)
             : base(message, innerException)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AcmeRequestException"/> class.
-        /// </summary>
-        /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that
-        /// holds the serialized object data about the exception being thrown.
-        /// </param>
-        /// <param name="context">
-        /// The <see cref="StreamingContext"/> 
-        /// that contains contextual information about the source or destination.
-        /// </param>
-        protected AcmeRequestException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            var errorJson = info.GetString("acme.error");
-            if (!string.IsNullOrWhiteSpace(errorJson))
-            {
-                Error = JsonConvert.DeserializeObject<AcmeError>(errorJson, jsonSerializerSettings);
-            }
-        }
-
-        /// <summary>
-        /// Sets the <see cref="SerializationInfo"/> 
-        /// with information about the exception.
-        /// </summary>
-        /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that
-        /// holds the serialized object data about the exception being thrown.
-        /// </param>
-        /// <param name="context">
-        /// The <see cref="StreamingContext"/> that 
-        /// contains contextual information about the source or destination.
-        /// </param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-
-            if (Error == null)
-            {
-                info.AddValue("acme.error", "");
-            }
-            else
-            {
-                info.AddValue("acme.error", JsonConvert.SerializeObject(Error, jsonSerializerSettings));
-            }
         }
 
         /// <summary>
