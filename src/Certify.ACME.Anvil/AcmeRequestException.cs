@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Json;
 using Newtonsoft.Json;
@@ -98,7 +98,7 @@ namespace Certify.ACME.Anvil
             {
                 if (Error != null)
                 {
-                    return $"{base.Message}\n{Error.Type}: {Error.Detail}";
+                    return $"{base.Message}\n{Error?.Type}: {Error?.Detail}";
                 }
 
                 return base.Message;
