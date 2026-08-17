@@ -3,9 +3,9 @@
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net10.0;</TargetFrameworks>
-        <AssemblyVersion>3.3.3</AssemblyVersion>
-        <Version>3.3.3</Version>
-        <FileVersion>3.3.3</FileVersion>
+        <AssemblyVersion>3.3.4</AssemblyVersion>
+        <Version>3.3.4</Version>
+        <FileVersion>3.3.4</FileVersion>
         <Authors>Webprofusion, https://github.com/fszlin/certes Contributors</Authors>
         <Product>Certify.ACME.Anvil</Product>
         <Title>$(Product)</Title>
@@ -58,7 +58,7 @@
         <DebugType>Full</DebugType>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0|AnyCPU'">
         <WarningLevel>5</WarningLevel>
     </PropertyGroup>
 
