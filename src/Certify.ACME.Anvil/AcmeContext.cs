@@ -100,9 +100,14 @@ namespace Certify.ACME.Anvil
                 return accountContext;
             }
 
-            if (accountUri != null)
+            // use the account uri supplied by the caller, or the one this context already knows, before
+            // asking the CA to identify the account. That lookup posts to new-account, which a CA requiring
+            // external account binding will reject.
+            var knownAccountUri = accountUri ?? this.accountUri;
+
+            if (knownAccountUri != null)
             {
-                return accountContext = new AccountContext(this, accountUri);
+                return accountContext = new AccountContext(this, knownAccountUri);
             }
             else
             {
