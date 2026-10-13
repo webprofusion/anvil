@@ -30,13 +30,14 @@ namespace Certify.ACME.Anvil
                     Identifiers = new[] {
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
+                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
                     Status = OrderStatus.Valid,
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
             var certInfo = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
                 CommonName = "www.example.com",
             }, key, null);
 
@@ -46,7 +47,7 @@ namespace Certify.ACME.Anvil
 
             var certInfoNoCn = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
             }, key, null);
 
             Assert.Equal(
@@ -74,13 +75,14 @@ namespace Certify.ACME.Anvil
                     Identifiers = new[] {
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
+                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
                     Status = OrderStatus.Valid,
                 });
 
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
             var certInfo = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
                 CommonName = "www.example.com",
             }, key, null);
 
@@ -90,7 +92,7 @@ namespace Certify.ACME.Anvil
 
             var certInfoNoCn = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
             }, key, null);
 
             Assert.Equal(
@@ -132,6 +134,7 @@ namespace Certify.ACME.Anvil
                     Identifiers = new[] {
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
+                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
                     Status = OrderStatus.Valid,
                 })
                 .ReturnsAsync(new Order
@@ -153,6 +156,7 @@ namespace Certify.ACME.Anvil
                     Identifiers = new[] {
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
+                    Certificate = new System.Uri("http://acme.d/order/101/cert/1234"),
                     Status = OrderStatus.Valid,
                 });
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
@@ -167,7 +171,7 @@ namespace Certify.ACME.Anvil
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
             var certInfo = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
                 CommonName = "www.example.com",
             }, key, null, 5);
 
@@ -177,7 +181,7 @@ namespace Certify.ACME.Anvil
 
             var certInfoNoCn = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
             }, key);
 
             Assert.Equal(
@@ -229,6 +233,7 @@ namespace Certify.ACME.Anvil
                         Identifiers = new[] {
                             new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                         },
+                        Certificate = certDefaultLoc,
                         Status = OrderStatus.Valid,
                     },
                     null,
@@ -253,7 +258,7 @@ namespace Certify.ACME.Anvil
             var key = KeyFactory.NewKey(KeyAlgorithm.RS256);
             var certInfoDefaultRoot = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
                 CommonName = "www.example.com",
             }, key, null);
 
@@ -263,7 +268,7 @@ namespace Certify.ACME.Anvil
 
             var certInfoAlternateRoot = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
                 CommonName = "www.example.com",
             }, key, "AlternateRoot");
 
@@ -273,7 +278,7 @@ namespace Certify.ACME.Anvil
 
             var certInfoUnknownRoot = await orderCtxMock.Object.Generate(new CsrInfo
             {
-                CountryName = "C",
+                CountryName = "CA",
                 CommonName = "www.example.com",
             }, key, "UnknownRoot");
 
@@ -300,7 +305,7 @@ namespace Certify.ACME.Anvil
             await Assert.ThrowsAsync<AcmeException>(() =>
                 orderCtxMock.Object.Generate(new CsrInfo
                 {
-                    CountryName = "C",
+                    CountryName = "CA",
                     CommonName = "www.example.com",
                 }, key, null));
         }
@@ -332,7 +337,7 @@ namespace Certify.ACME.Anvil
             await Assert.ThrowsAsync<AcmeException>(() =>
                 orderCtxMock.Object.Generate(new CsrInfo
                 {
-                    CountryName = "C",
+                    CountryName = "CA",
                     CommonName = "www.example.com",
                 }, key, null));
         }
@@ -372,6 +377,13 @@ namespace Certify.ACME.Anvil
                         new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
                     },
                     Status = OrderStatus.Processing,
+                })
+                .ReturnsAsync(new Order
+                {
+                    Identifiers = new[] {
+                        new Identifier { Value = "www.example.com", Type = IdentifierType.Dns },
+                    },
+                    Status = OrderStatus.Processing,
                 });
 
             orderCtxMock.Setup(m => m.Finalize(It.IsAny<byte[]>()))
@@ -387,7 +399,7 @@ namespace Certify.ACME.Anvil
             await Assert.ThrowsAsync<AcmeException>(() =>
                 orderCtxMock.Object.Generate(new CsrInfo
                 {
-                    CountryName = "C",
+                    CountryName = "CA",
                     CommonName = "www.example.com",
                 }, key));
         }
