@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Certify.ACME.Anvil.Acme;
 using Certify.ACME.Anvil.Acme.Resource;
@@ -23,7 +24,23 @@ namespace Certify.ACME.Anvil
         /// </returns>
         public static async Task<Order> Finalize(this IOrderContext context, CsrInfo csr, IKey key)
         {
-            var builder = await context.CreateCsr(key);
+            var order = await context.Resource();
+            return await context.Finalize(csr, key, order.Identifiers);
+        }
+
+        /// <summary>
+        /// Finalizes the certificate order, using the given identifiers for the CSR instead of those reported by the order.
+        /// </summary>
+        /// <param name="context">The order context.</param>
+        /// <param name="csr">The CSR.</param>
+        /// <param name="key">The private key for the certificate.</param>
+        /// <param name="identifiers">The identifiers to include in the CSR.</param>
+        /// <returns>
+        /// The order finalized.
+        /// </returns>
+        public static Task<Order> Finalize(this IOrderContext context, CsrInfo csr, IKey key, IEnumerable<Identifier> identifiers)
+        {
+            var builder = CreateCsr(key, identifiers);
 
             foreach (var (name, value) in csr.Fields)
             {
@@ -31,7 +48,7 @@ namespace Certify.ACME.Anvil
             }
 
             var csrBytes = builder.Generate(csr.RequireOcspMustStaple);
-            return await context.Finalize(csrBytes);
+            return context.Finalize(csrBytes);
         }
 
         /// <summary>
@@ -42,9 +59,14 @@ namespace Certify.ACME.Anvil
         /// <returns>The CSR.</returns>
         public static async Task<CertificationRequestBuilder> CreateCsr(this IOrderContext context, IKey key)
         {
-            var builder = new CertificationRequestBuilder(key);
             var order = await context.Resource();
-            foreach (var identifier in order.Identifiers)
+            return CreateCsr(key, order.Identifiers);
+        }
+
+        private static CertificationRequestBuilder CreateCsr(IKey key, IEnumerable<Identifier> identifiers)
+        {
+            var builder = new CertificationRequestBuilder(key);
+            foreach (var identifier in identifiers)
             {
                 if (identifier.Type == IdentifierType.Dns)
                 {
