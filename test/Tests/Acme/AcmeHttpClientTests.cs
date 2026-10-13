@@ -139,6 +139,51 @@ namespace Certify.ACME.Anvil.Acme
         }
 
 
+        private class StaticResponseHandler : HttpMessageHandler
+        {
+            private readonly HttpStatusCode status;
+            private readonly string mediaType;
+            private readonly string body;
+
+            public StaticResponseHandler(HttpStatusCode status, string mediaType, string body)
+            {
+                this.status = status;
+                this.mediaType = mediaType;
+                this.body = body;
+            }
+
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                var resp = new HttpResponseMessage(status) { Content = new ByteArrayContent(Encoding.UTF8.GetBytes(body)) };
+                if (mediaType != null)
+                {
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
+                }
+
+                return Task.FromResult(resp);
+            }
+        }
+
+        [Theory]
+        [InlineData(HttpStatusCode.BadGateway, "text/html", "<html><body>502 Bad Gateway</body></html>", "urn:ietf:params:acme:error:serverInternal")]
+        [InlineData(HttpStatusCode.GatewayTimeout, null, "", "urn:ietf:params:acme:error:serverInternal")]
+        [InlineData(HttpStatusCode.BadRequest, "text/plain", "policy rejected", null)]
+        [InlineData(HttpStatusCode.BadRequest, "application/problem+json", "", null)]
+        public async Task GeneratesErrorForUnparsableErrorResponse(HttpStatusCode status, string mediaType, string body, string expectedType)
+        {
+            using (var http = new HttpClient(new StaticResponseHandler(status, mediaType, body)))
+            {
+                var client = new AcmeHttpClient(new Uri("https://acme.d/directory"), http);
+                var resp = await client.Post<Order>(new Uri("https://acme.d/order/1/finalize"), new { });
+
+                Assert.Null(resp.Resource);
+                Assert.NotNull(resp.Error);
+                Assert.Equal(status, resp.Error.Status);
+                Assert.Equal(expectedType, resp.Error.Type);
+                Assert.Contains($"HTTP {(int)status}", resp.Error.Detail);
+            }
+        }
+
         [Fact]
         public void SetsUserAgent()
         {

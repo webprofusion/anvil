@@ -237,6 +237,24 @@ namespace Certify.ACME.Anvil.Acme
                         error.Type = "urn:ietf:params:acme:error:serverInternal";
                     }
                 }
+
+                if (error == null)
+                {
+                    // error response could not be parsed (e.g. a gateway html page or an empty body), normalize using a generated error so the request fails instead of returning no resource
+                    var body = await response.Content.ReadAsStringAsync();
+                    body = string.Join(" ", (body ?? "").Split((char[])null, StringSplitOptions.RemoveEmptyEntries));
+                    if (body.Length > 200)
+                    {
+                        body = body.Substring(0, 200) + "...";
+                    }
+
+                    var mediaType = response.Content?.Headers?.ContentType?.MediaType ?? "none";
+
+                    error = new AcmeError();
+                    error.Status = response.StatusCode;
+                    error.Detail = $"The Certificate Authority service returned HTTP {(int)response.StatusCode} {response.ReasonPhrase} without a valid ACME error (content type: {mediaType}) [auto generated error from status code]: {body}";
+                    error.Type = (int)response.StatusCode >= 500 ? "urn:ietf:params:acme:error:serverInternal" : null;
+                }
             }
 
             return new AcmeHttpResponse<T>(location, resource, links, error, retryafter);
