@@ -33,5 +33,11 @@
         /// Proves domain control via a persistent DNS TXT record at _validation-persist.{domain}.
         /// </summary>
         public const string DnsPersist01 = "dns-persist-01";
+
+        /// <summary>
+        /// The dns-account-01 challenge (draft-ietf-acme-dns-account-label). As dns-01, with the TXT record at an
+        /// account specific label: _{label}._acme-challenge.{domain}.
+        /// </summary>
+        public const string DnsAccount01 = "dns-account-01";
     }
 }

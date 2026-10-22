@@ -53,6 +53,18 @@ namespace Certify.ACME.Anvil.Acme.Resource
         public Dictionary<string, string> Profiles { get; set; }
 
         /// <summary>
+        /// Issuer domain names usable in dns-persist-01 records before any order exists (draft-ietf-acme-dns-persist-02)
+        /// </summary>
+        [JsonProperty("issuerDomainNames")]
+        public IList<string> IssuerDomainNames { get; set; }
+
+        /// <summary>
+        /// Prefix of the hashed account URIs used in dns-persist-01 records (draft-ietf-acme-dns-persist-02)
+        /// </summary>
+        [JsonProperty("accountHashPrefix")]
+        public string AccountHashPrefix { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DirectoryMeta"/> class.
         /// </summary>
         /// <param name="termsOfService">The terms of service.</param>

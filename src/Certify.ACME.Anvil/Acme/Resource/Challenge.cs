@@ -105,7 +105,7 @@ namespace Certify.ACME.Anvil.Acme.Resource
         public string TokenAuthority { get; set; }
 
         /// <summary>
-        /// Gets or sets the account URI for dns-persist-01 challenges (draft-ietf-acme-dns-persist).
+        /// Gets or sets the account URI for dns-persist-01 challenges (draft-ietf-acme-dns-persist-01 only).
         /// The client must use this value in the _validation-persist DNS TXT record.
         /// </summary>
         [JsonProperty("accounturi")]
@@ -114,9 +114,22 @@ namespace Certify.ACME.Anvil.Acme.Resource
         /// <summary>
         /// Gets or sets the issuer domain names for dns-persist-01 challenges (draft-ietf-acme-dns-persist).
         /// The client must choose one of these to include in the _validation-persist DNS TXT record.
+        /// Draft-02 names the field issuerDomainNames, earlier drafts issuer-domain-names; either is accepted.
         /// </summary>
-        [JsonProperty("issuer-domain-names")]
+        [JsonProperty("issuerDomainNames")]
         public IList<string> IssuerDomainNames { get; set; }
+
+        [JsonProperty("issuer-domain-names")]
+        private IList<string> LegacyIssuerDomainNames
+        {
+            set
+            {
+                if (IssuerDomainNames == null)
+                {
+                    IssuerDomainNames = value;
+                }
+            }
+        }
 
     }
 }
