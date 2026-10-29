@@ -84,6 +84,14 @@ namespace Certify.ACME.Anvil
         }
 
         /// <summary>
+        /// Gets or sets additional subject fields as an X509 distinguished name (e.g. "O=Example\, Inc.,L=Brisbane,C=AU"), added ahead of the other fields.
+        /// </summary>
+        /// <value>
+        /// The additional subject fields.
+        /// </value>
+        public string SubjectFields { get; set; }
+
+        /// <summary>
         /// If enabled, certificate request requires Ocsp Must Staple attribute
         /// </summary>
         public bool RequireOcspMustStaple { get; set; }

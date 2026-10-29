@@ -42,6 +42,11 @@ namespace Certify.ACME.Anvil
         {
             var builder = CreateCsr(key, identifiers);
 
+            if (!string.IsNullOrWhiteSpace(csr.SubjectFields))
+            {
+                builder.AddName(csr.SubjectFields);
+            }
+
             foreach (var (name, value) in csr.Fields)
             {
                 builder.AddName(name, value);
